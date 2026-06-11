@@ -16,4 +16,4 @@
 
 ## History
 
-<!-- Keep this updated. Earliest to latest -->
+- **2026-06-11** — Initial Next.js 16 + Tailwind CSS v4 setup with React 19 and TypeScript (commits `b555e9a`, `5490fb8`)
