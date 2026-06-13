@@ -433,6 +433,13 @@ Stripe webhook listens for `checkout.session.completed` and `customer.subscripti
 - [Raycast](https://raycast.com) — fast access, minimal chrome
 - [Notion](https://notion.so) — markdown editing feel
 
+### Screenshots
+Refer to screenshots below as reference. It does not have to be exact. 
+- @context/screenshots/dashboard-ui-main.png
+- @context/screenshots/dashboard-ui-drawer-open-error.png
+- @context/screenshots/dashboard-ui-drawer-new-entry.png
+
+
 ### Layout
 
 ```
