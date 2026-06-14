@@ -1,18 +1,26 @@
 # Current Feature
 
-<!-- Feature name and short description -->
+Dashboard UI Phase 2 — collapsible sidebar with categories, tags, user avatar, and mobile drawer support.
 
 ## Status
 
-<!-- Not Started | In Progress | Completed -->
+In Progress
 
 ## Goals
 
-<!-- Goals and requiremens -->
+- Collapsible sidebar
+- New Entry button
+- List of Error Categories with the number of errors in each
+- List of Tags with the number of errors in each
+- User avatar area at the bottom
+- Drawer icon to open/close sidebar
+- Always a drawer on mobile view
 
 ## Notes
 
-<!-- Any extra notes -->
+- Use mock data from `src/lib/mock-data.ts` (import directly, no DB yet)
+- Reference screenshot: `context/screenshots/dashboard-ui-drawer-open-error.png`
+- See phase 3 spec at `context/features/dashboard-phase-3-spec.md` for future context
 
 ## History
 

@@ -7,16 +7,16 @@ This is phase 2 of 3 for the dashboard UI layout. Use the screenshot referenced 
 ## Requirements for phase 2
 
 - Collapsible sidebar
-- Items/types with links to /items/TYPE (eg.items/snippets)
-- Favorite collections
-- Most recent collections
+- New Entry button
+- List of Error Categories with the numbers of errors in it
+- List of Tags with the number of errors in it 
 - User avatar area at the bottom
 - Drawer icon to open/close sidebar
 - Always a drawer on mobile view
 
 ## References
 
-- @context/screenshots/dashboard-ui-main.png
+- @context/screenshots/dashboard-ui-drawer-open-error.png
 - @context/project-overview.md
 - @src/lib/mock-data.ts
 - @context/features/dashboard-phase-1-spec.md
