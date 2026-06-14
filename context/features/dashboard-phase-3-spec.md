@@ -7,10 +7,9 @@ This is phase 3 of 3 for the dashboard UI layout. Use the screenshot referenced 
 ## Requirements for phase 3
 
 - The main area to the right
-- Recent collections
-- Pinned Items
-- 10 Recent items
-- 4 stats cards at the top for number of items, collections, favorite items and favorite collections (Not in screenshot)
+- label of selected category above the list of errors showing number of entries
+- sorter on the right
+- list of error items with info: tags, solved/unsolved, date of creation. Pin icon that is yellow if error is pinned or not. Star icon that shows if error is favorites or not. Icon that shows if its error created by community or self created error
 
 ## References
 

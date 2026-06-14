@@ -5,6 +5,7 @@ import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, Chevr
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { MOCK_ERROR_ENTRIES, MOCK_TAGS, MOCK_USER } from "@/lib/mock-data"
+import { useDashboard, type Category } from "@/context/dashboard-context"
 
 interface SidebarProps {
   isOpen: boolean
@@ -14,6 +15,7 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [categoriesOpen, setCategoriesOpen] = useState(true)
   const [tagsOpen, setTagsOpen] = useState(true)
+  const { activeCategory, setActiveCategory } = useDashboard()
 
   const allCount = MOCK_ERROR_ENTRIES.length
   const solvedCount = MOCK_ERROR_ENTRIES.filter(e => e.status === "SOLVED").length
@@ -100,11 +102,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </button>
                 {categoriesOpen && (
                   <nav className="flex flex-col gap-0.5">
-                    <NavItem icon={<LayoutList className="size-4" />} label="All Errors" count={allCount} active />
-                    <NavItem icon={<CheckCircle className="size-4" />} label="Solved" count={solvedCount} />
-                    <NavItem icon={<AlertCircle className="size-4" />} label="Unsolved" count={unsolvedCount} />
-                    <NavItem icon={<Star className="size-4" />} label="Favorites" count={favoritesCount} />
-                    <NavItem icon={<Pin className="size-4" />} label="Pinned" count={pinnedCount} />
+                    <NavItem icon={<LayoutList className="size-4" />} label="All Errors" count={allCount} active={activeCategory === 'all'} onClick={() => setActiveCategory('all')} />
+                    <NavItem icon={<CheckCircle className="size-4" />} label="Solved" count={solvedCount} active={activeCategory === 'solved'} onClick={() => setActiveCategory('solved')} />
+                    <NavItem icon={<AlertCircle className="size-4" />} label="Unsolved" count={unsolvedCount} active={activeCategory === 'unsolved'} onClick={() => setActiveCategory('unsolved')} />
+                    <NavItem icon={<Star className="size-4" />} label="Favorites" count={favoritesCount} active={activeCategory === 'favorites'} onClick={() => setActiveCategory('favorites')} />
+                    <NavItem icon={<Pin className="size-4" />} label="Pinned" count={pinnedCount} active={activeCategory === 'pinned'} onClick={() => setActiveCategory('pinned')} />
                   </nav>
                 )}
               </section>
@@ -162,14 +164,17 @@ function NavItem({
   label,
   count,
   active = false,
+  onClick,
 }: {
   icon: React.ReactNode
   label: string
   count: number
   active?: boolean
+  onClick?: () => void
 }) {
   return (
     <button
+      onClick={onClick}
       className={cn(
         "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
