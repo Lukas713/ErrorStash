@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                   String       @id @default(cuid())
+  name                 String?
+  email                String       @unique
+  emailVerified        DateTime?
+  image                String?
+  isPro                Boolean      @default(false)
+  stripeCustomerId     String?      @unique
+  stripeSubscriptionId String?      @unique
+  createdAt            DateTime     @default(now())
+
+  accounts             Account[]
+  sessions             Session[]
+  errorEntries         ErrorEntry[]
+  tags                 Tag[]
+}
+
+model ErrorEntry {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  stackTrace  String?
+  solution    String?
+  status      Status     @default(UNSOLVED)
+  isPublic    Boolean    @default(false)
+  isFavorite  Boolean    @default(false)
+  isPinned    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags        ErrorTag[]
+
+  @@index([userId])
+  @@index([userId, status])
+  @@index([userId, isFavorite])
+  @@index([userId, isPinned])
+  @@index([createdAt])
+}
+
+model Tag {
+  id      String     @id @default(cuid())
+  name    String
+
+  userId  String
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries ErrorTag[]
+
+  @@unique([name, userId])
+  @@index([userId])
+}
+
+model ErrorTag {
+  errorEntryId String
+  tagId        String
+  addedAt      DateTime   @default(now())
+
+  errorEntry   ErrorEntry @relation(fields: [errorEntryId], references: [id], onDelete: Cascade)
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([errorEntryId, tagId])
+}
+
+enum Status {
+  UNSOLVED
+  SOLVED
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
