@@ -1,3 +1,5 @@
+import ErrorList from '@/components/errors/ErrorList'
+
 export default function DashboardPage() {
-  return <h2 className="text-lg font-semibold text-muted-foreground">Main</h2>;
+  return <ErrorList />
 }
