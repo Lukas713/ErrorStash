@@ -4,7 +4,6 @@ import { useState } from "react"
 import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { MOCK_ERROR_ENTRIES, MOCK_TAGS, MOCK_USER } from "@/lib/mock-data"
 import { useDashboard, type Category } from "@/context/dashboard-context"
 
 interface SidebarProps {
@@ -15,32 +14,26 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [categoriesOpen, setCategoriesOpen] = useState(true)
   const [tagsOpen, setTagsOpen] = useState(true)
-  const { activeCategory, setActiveCategory } = useDashboard()
+  const { activeCategory, setActiveCategory, entries, user } = useDashboard()
 
-  const allCount = MOCK_ERROR_ENTRIES.length
-  const solvedCount = MOCK_ERROR_ENTRIES.filter(e => e.status === "SOLVED").length
-  const unsolvedCount = MOCK_ERROR_ENTRIES.filter(e => e.status === "UNSOLVED").length
-  const favoritesCount = MOCK_ERROR_ENTRIES.filter(e => e.isFavorite).length
-  const pinnedCount = MOCK_ERROR_ENTRIES.filter(e => e.isPinned).length
+  const allCount = entries.length
+  const solvedCount = entries.filter(e => e.status === "SOLVED").length
+  const unsolvedCount = entries.filter(e => e.status === "UNSOLVED").length
+  const favoritesCount = entries.filter(e => e.isFavorite).length
+  const pinnedCount = entries.filter(e => e.isPinned).length
 
-  const tagCounts = MOCK_ERROR_ENTRIES.reduce<Record<string, number>>((acc, entry) => {
-    entry.tags.forEach(tag => {
-      acc[tag.id] = (acc[tag.id] ?? 0) + 1
-    })
-    return acc
-  }, {})
-
-  const tagsWithCounts = MOCK_TAGS
-    .filter(tag => tagCounts[tag.id])
-    .map(tag => ({ ...tag, count: tagCounts[tag.id] }))
-    .sort((a, b) => b.count - a.count)
-
-  const userInitials = MOCK_USER.name
-    .split(" ")
-    .map(n => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
+  const tagsWithCounts = Object.values(
+    entries.reduce<Record<string, { id: string; name: string; count: number }>>((acc, entry) => {
+      entry.tags.forEach(tag => {
+        if (acc[tag.id]) {
+          acc[tag.id].count++
+        } else {
+          acc[tag.id] = { ...tag, count: 1 }
+        }
+      })
+      return acc
+    }, {})
+  ).sort((a, b) => b.count - a.count)
 
   return (
     <>
@@ -145,12 +138,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           )}
         >
           <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {userInitials}
+            {user?.name
+              ? user.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
+              : user?.email.slice(0, 2).toUpperCase() ?? "?"}
           </div>
           {isOpen && (
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{MOCK_USER.name}</p>
-              <p className="truncate text-xs text-sidebar-foreground/50">{MOCK_USER.email}</p>
+              <p className="truncate text-sm font-medium">{user?.name ?? user?.email}</p>
+              <p className="truncate text-xs text-sidebar-foreground/50">{user?.email}</p>
             </div>
           )}
         </div>

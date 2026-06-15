@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { MOCK_ERROR_ENTRIES } from '@/lib/mock-data'
 import { useDashboard, CATEGORY_LABELS } from '@/context/dashboard-context'
 import ErrorCard from './ErrorCard'
 
@@ -14,11 +13,11 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ]
 
 export default function ErrorList() {
-  const { activeCategory } = useDashboard()
+  const { activeCategory, entries } = useDashboard()
   const [sort, setSort] = useState<SortOption>('newest')
   const [sortOpen, setSortOpen] = useState(false)
 
-  const filtered = MOCK_ERROR_ENTRIES.filter(entry => {
+  const filtered = entries.filter(entry => {
     switch (activeCategory) {
       case 'solved':    return entry.status === 'SOLVED'
       case 'unsolved':  return entry.status === 'UNSOLVED'
