@@ -1,12 +1,12 @@
 import { Pin, Star, Globe, Lock, CheckCircle, AlertCircle } from 'lucide-react'
-import { MockErrorEntry } from '@/lib/mock-data'
+import type { ErrorEntryWithTags } from '@/lib/db/errors'
 import { cn } from '@/lib/utils'
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-export default function ErrorCard({ entry }: { entry: MockErrorEntry }) {
+export default function ErrorCard({ entry }: { entry: ErrorEntryWithTags }) {
   return (
     <div className="flex cursor-pointer items-start gap-3 border-b border-border px-4 py-3 hover:bg-muted/30">
       <div className="min-w-0 flex-1">
