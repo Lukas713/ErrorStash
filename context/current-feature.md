@@ -1,36 +1,33 @@
 # Current Feature
 
-Prisma + Neon PostgreSQL Setup
+Database Seed Script
 
 ## Status
 
-Completed
+In Progress
 
 ## Goals
 
-- Install and configure Prisma 7 ORM
-- Set up Neon PostgreSQL (serverless) as the database provider
-- Create initial schema based on data models in `context/project-overview.md` (ErrorEntry, Tag, ErrorTag, User)
-- Include NextAuth models (Account, Session, VerificationToken)
-- Add appropriate indexes and cascade deletes
-- Create initial migration (never use `prisma db push`)
-- Wire `DATABASE_URL` via `.env.local`
+- Create `prisma/seed.ts` with realistic developer error data
+- Seed 1 demo user (`demo@errorstash.io`)
+- Seed 17 tags (react, hooks, typescript, nextjs, prisma, postgresql, database, docker, devops, css, tailwind, api, cors, nodejs, npm, git, ssr)
+- Seed 8 error entries — mix of SOLVED/UNSOLVED, some pinned, some favorited
+- Script must be idempotent (safe to re-run)
+- Wire `npm run db:seed` and `npx prisma db seed` via `package.json`
 
 ## Notes
 
-- Spec: `context/features/database-spec.md`
-- Data models reference: `context/project-overview.md`
-- Coding standards (DB section): `context/coding-standards.md`
-- Use Prisma 7 — has breaking changes; read upgrade guide before starting
-- Development branch in `DATABASE_URL`, production branch separate
-- Always use `prisma migrate dev` for schema changes
+- Spec: `context/features/seed-spec.md`
+- Run with: `npm run db:seed`
+- Uses `tsx` to execute TypeScript directly (installed as dev dependency)
+- Loads `.env.local` via dotenv at top of seed file (same pattern as `prisma.config.ts`)
+- Imports `PrismaClient` from `src/generated/prisma/client` with `PrismaNeon` adapter
 
 ## Previous Feature
 
-Dashboard UI Phase 3 — main content area with error list (Completed)
+Prisma + Neon PostgreSQL Setup (Completed)
 
-- Phase 1 spec: `context/features/dashboard-phase-1-spec.md`
-- Phase 2 spec: `context/features/dashboard-phase-2-spec.md`
+- Spec: `context/features/database-spec.md`
 
 ## History
 
