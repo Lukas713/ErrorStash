@@ -17,6 +17,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 interface DashboardContextValue {
   activeCategory: Category
   setActiveCategory: (c: Category) => void
+  activeTags: string[]
+  toggleTag: (tag: string) => void
   entries: ErrorEntryWithTags[]
   user: DashboardUser | null
   tags: TagWithCount[]
@@ -36,8 +38,16 @@ export function DashboardProvider({
   user: DashboardUser | null
 }) {
   const [activeCategory, setActiveCategory] = useState<Category>('all')
+  const [activeTags, setActiveTags] = useState<string[]>([])
+
+  function toggleTag(tag: string) {
+    setActiveTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    )
+  }
+
   return (
-    <DashboardContext.Provider value={{ activeCategory, setActiveCategory, entries: initialEntries, user, tags: initialTags }}>
+    <DashboardContext.Provider value={{ activeCategory, setActiveCategory, activeTags, toggleTag, entries: initialEntries, user, tags: initialTags }}>
       {children}
     </DashboardContext.Provider>
   )

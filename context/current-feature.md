@@ -8,12 +8,13 @@ Completed
 
 ## Goals
 
-- Create `src/lib/db/error-tags.ts` with data fetching functions
-- Replace dummy tags data in the sidebar with real tags from Neon via Prisma
-- Fetch tags directly in server component
-- Keep the current design (reference `context/screenshots/dashboard-ui-drawer-entry.png`)
-- Update error count displayed next to each tag
-- Pro users see all tags; non-pro users see only their own tags
+- [x] Create `src/lib/db/error-tags.ts` with data fetching functions
+- [x] Replace dummy tags data in the sidebar with real tags from Neon via Prisma
+- [x] Fetch tags directly in server component
+- [x] Keep the current design (reference `context/screenshots/dashboard-ui-drawer-entry.png`)
+- [x] Update error count displayed next to each tag
+- [x] Pro users see all tags; non-pro users see only their own tags
+- [x] Make sidebar tags clickable — clicking a tag filters the error list to entries with that tag
 
 ## Notes
 
@@ -34,4 +35,4 @@ Dashboard — Real Errors from Database (Completed)
 - **2026-06-14** — Prisma 7 + Neon PostgreSQL setup: installed `prisma@7`, `@prisma/adapter-neon`, `@neondatabase/serverless`; full schema with all models and indexes; `prisma.config.ts` with dotenv for CLI; `src/lib/prisma.ts` singleton with `PrismaNeon` adapter; initial migration `20260614132955_init` applied to Neon dev branch
 - **2026-06-15** — Database seed script: `prisma/seed.ts` with demo user, 17 tags, 8 error entries (mix of SOLVED/UNSOLVED, pinned, favorited); wired `npm run db:seed` via `package.json` (commit `736fe92`)
 - **2026-06-15** — Dashboard real data: replaced all mock data with Neon/Prisma queries; `src/lib/db/errors.ts` with `getErrorEntries()` and `getCurrentUser()`; entries fetched in server component layout and shared via `DashboardContext`; sidebar counts and tag list now driven by real DB data
-- **2026-06-17** — Dashboard real tags: `src/lib/db/error-tags.ts` with `getTagsWithCounts()` (pro users see all tags, non-pro see own); sidebar tags fetched server-side, sorted by count, filtered with inline search, paginated (10 initial + load 5 more), with "Close all" to reset
+- **2026-06-17** — Dashboard real tags: `src/lib/db/error-tags.ts` with `getTagsWithCounts()` (pro users see all tags, non-pro see own); sidebar tags fetched server-side, sorted by count, filtered with inline search, paginated (10 initial + load 5 more), with "Close all" to reset; tags clickable to filter error list (toggle active tag, header updates to `#tagname`, category filter stacks with tag filter)
