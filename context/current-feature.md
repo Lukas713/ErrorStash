@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard — Real Errors from Database
+Dashboard — Real Tags from Database
 
 ## Status
 
@@ -8,22 +8,22 @@ Completed
 
 ## Goals
 
-- Create `src/lib/db/errors.ts` with data fetching functions
-- Replace mock data in the dashboard main area with real errors from Neon via Prisma
-- Fetch errors directly in server component
-- Keep the current design (reference `context/screenshots/dashboard-ui-main.png`)
-- Update errors stats display
+- Create `src/lib/db/error-tags.ts` with data fetching functions
+- Replace dummy tags data in the sidebar with real tags from Neon via Prisma
+- Fetch tags directly in server component
+- Keep the current design (reference `context/screenshots/dashboard-ui-drawer-entry.png`)
+- Update error count displayed next to each tag
+- Pro users see all tags; non-pro users see only their own tags
 
 ## Notes
 
-- Spec: `context/features/dashboard-collections-spec`
-- Replace `src/lib/mock-data.ts` usage with Prisma queries
+- Spec: `context/features/dashboard-tags-spec.md`
 
 ## Previous Feature
 
-Database Seed Script (Completed)
+Dashboard — Real Errors from Database (Completed)
 
-- Spec: `context/features/seed-spec.md`
+- Spec: `context/features/dashboard-collections-spec`
 
 ## History
 
@@ -34,3 +34,4 @@ Database Seed Script (Completed)
 - **2026-06-14** — Prisma 7 + Neon PostgreSQL setup: installed `prisma@7`, `@prisma/adapter-neon`, `@neondatabase/serverless`; full schema with all models and indexes; `prisma.config.ts` with dotenv for CLI; `src/lib/prisma.ts` singleton with `PrismaNeon` adapter; initial migration `20260614132955_init` applied to Neon dev branch
 - **2026-06-15** — Database seed script: `prisma/seed.ts` with demo user, 17 tags, 8 error entries (mix of SOLVED/UNSOLVED, pinned, favorited); wired `npm run db:seed` via `package.json` (commit `736fe92`)
 - **2026-06-15** — Dashboard real data: replaced all mock data with Neon/Prisma queries; `src/lib/db/errors.ts` with `getErrorEntries()` and `getCurrentUser()`; entries fetched in server component layout and shared via `DashboardContext`; sidebar counts and tag list now driven by real DB data
+- **2026-06-17** — Dashboard real tags: `src/lib/db/error-tags.ts` with `getTagsWithCounts()` (pro users see all tags, non-pro see own); sidebar tags fetched server-side, sorted by count, filtered with inline search, paginated (10 initial + load 5 more), with "Close all" to reset
