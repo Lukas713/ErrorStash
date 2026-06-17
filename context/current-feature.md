@@ -1,25 +1,16 @@
 # Current Feature
 
-Sidebar — Pro Badge
-
 ## Status
-
-In Progress
 
 ## Goals
 
-- [x] Add ShadCN UI Badge component to the account section at the bottom of the sidebar
-- [x] Badge should be clean and subtle
-
 ## Notes
-
-- Spec: `context/features/add-pro-badge-sidebar.md`
 
 ## Previous Feature
 
-Dashboard — Real Tags from Database (Completed)
+Sidebar — Pro Badge (Completed)
 
-- Spec: `context/features/dashboard-tags-spec.md`
+- Spec: `context/features/add-pro-badge-sidebar.md`
 
 ## History
 
@@ -31,3 +22,4 @@ Dashboard — Real Tags from Database (Completed)
 - **2026-06-15** — Database seed script: `prisma/seed.ts` with demo user, 17 tags, 8 error entries (mix of SOLVED/UNSOLVED, pinned, favorited); wired `npm run db:seed` via `package.json` (commit `736fe92`)
 - **2026-06-15** — Dashboard real data: replaced all mock data with Neon/Prisma queries; `src/lib/db/errors.ts` with `getErrorEntries()` and `getCurrentUser()`; entries fetched in server component layout and shared via `DashboardContext`; sidebar counts and tag list now driven by real DB data
 - **2026-06-17** — Dashboard real tags: `src/lib/db/error-tags.ts` with `getTagsWithCounts()` (pro users see all tags, non-pro see own); sidebar tags fetched server-side, sorted by count, filtered with inline search, paginated (10 initial + load 5 more), with "Close all" to reset; tags clickable to filter error list (toggle active tag, header updates to `#tagname`, category filter stacks with tag filter)
+- **2026-06-17** — Sidebar Pro badge: installed ShadCN `Badge` component; "Pro" badge renders inline next to the username in the sidebar footer when `user.isPro` is true, using `variant="secondary"` for a clean, subtle appearance
