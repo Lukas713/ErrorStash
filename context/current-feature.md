@@ -1,30 +1,25 @@
 # Current Feature
 
-Dashboard — Real Tags from Database
+Sidebar — Pro Badge
 
 ## Status
 
-Completed
+In Progress
 
 ## Goals
 
-- [x] Create `src/lib/db/error-tags.ts` with data fetching functions
-- [x] Replace dummy tags data in the sidebar with real tags from Neon via Prisma
-- [x] Fetch tags directly in server component
-- [x] Keep the current design (reference `context/screenshots/dashboard-ui-drawer-entry.png`)
-- [x] Update error count displayed next to each tag
-- [x] Pro users see all tags; non-pro users see only their own tags
-- [x] Make sidebar tags clickable — clicking a tag filters the error list to entries with that tag
+- [x] Add ShadCN UI Badge component to the account section at the bottom of the sidebar
+- [x] Badge should be clean and subtle
 
 ## Notes
 
-- Spec: `context/features/dashboard-tags-spec.md`
+- Spec: `context/features/add-pro-badge-sidebar.md`
 
 ## Previous Feature
 
-Dashboard — Real Errors from Database (Completed)
+Dashboard — Real Tags from Database (Completed)
 
-- Spec: `context/features/dashboard-collections-spec`
+- Spec: `context/features/dashboard-tags-spec.md`
 
 ## History
 
