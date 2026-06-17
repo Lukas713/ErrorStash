@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useDashboard, type Category } from "@/context/dashboard-context"
 
@@ -175,7 +176,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           </div>
           {isOpen && (
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{user?.name ?? user?.email}</p>
+              <div className="flex items-center gap-1.5">
+                <p className="truncate text-sm font-medium">{user?.name ?? user?.email}</p>
+                {user?.isPro && (
+                  <Badge variant="secondary" className="shrink-0 px-1.5 py-0 text-[10px] leading-4">
+                    Pro
+                  </Badge>
+                )}
+              </div>
               <p className="truncate text-xs text-sidebar-foreground/50">{user?.email}</p>
             </div>
           )}
