@@ -19,7 +19,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [tagsOpen, setTagsOpen] = useState(true)
   const [visibleTagCount, setVisibleTagCount] = useState(TAGS_INITIAL)
   const [tagSearch, setTagSearch] = useState('')
-  const { activeCategory, setActiveCategory, entries, user, tags } = useDashboard()
+  const { activeCategory, setActiveCategory, activeTags, toggleTag, entries, user, tags } = useDashboard()
 
   const allCount = entries.length
   const solvedCount = entries.filter(e => e.status === "SOLVED").length
@@ -126,6 +126,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                           icon={<Tag className="size-3.5" />}
                           label={tag.name}
                           count={tag.count}
+                          active={activeTags.includes(tag.name)}
+                          onClick={() => toggleTag(tag.name)}
                         />
                       ))}
                     {(() => {

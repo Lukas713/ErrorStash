@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, X } from 'lucide-react'
 import { useDashboard, CATEGORY_LABELS } from '@/context/dashboard-context'
 import ErrorCard from './ErrorCard'
 
@@ -13,18 +13,22 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ]
 
 export default function ErrorList() {
-  const { activeCategory, entries } = useDashboard()
+  const { activeCategory, activeTags, toggleTag, entries } = useDashboard()
   const [sort, setSort] = useState<SortOption>('newest')
   const [sortOpen, setSortOpen] = useState(false)
 
   const filtered = entries.filter(entry => {
-    switch (activeCategory) {
-      case 'solved':    return entry.status === 'SOLVED'
-      case 'unsolved':  return entry.status === 'UNSOLVED'
-      case 'favorites': return entry.isFavorite
-      case 'pinned':    return entry.isPinned
-      default:          return true
-    }
+    const categoryMatch = (() => {
+      switch (activeCategory) {
+        case 'solved':    return entry.status === 'SOLVED'
+        case 'unsolved':  return entry.status === 'UNSOLVED'
+        case 'favorites': return entry.isFavorite
+        case 'pinned':    return entry.isPinned
+        default:          return true
+      }
+    })()
+    const tagMatch = activeTags.length === 0 || activeTags.every(t => entry.tags.some(et => et.name === t))
+    return categoryMatch && tagMatch
   })
 
   const sorted = [...filtered].sort((a, b) => {
@@ -36,13 +40,23 @@ export default function ErrorList() {
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <h2 className="text-sm font-semibold text-foreground">
             {CATEGORY_LABELS[activeCategory]}
           </h2>
           <span className="text-xs text-muted-foreground">
             {filtered.length} {filtered.length === 1 ? 'entry' : 'entries'}
           </span>
+          {activeTags.map(tag => (
+            <button
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className="inline-flex items-center gap-1 rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-xs text-blue-400 hover:border-blue-500/50 hover:bg-blue-500/20"
+            >
+              #{tag}
+              <X className="size-3" />
+            </button>
+          ))}
         </div>
 
         {/* Sort dropdown */}
