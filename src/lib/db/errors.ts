@@ -18,6 +18,7 @@ export type DashboardUser = {
   id: string
   name: string | null
   email: string
+  isPro: boolean
 }
 
 export async function getErrorEntries(): Promise<ErrorEntryWithTags[]> {
@@ -48,7 +49,7 @@ export async function getErrorEntries(): Promise<ErrorEntryWithTags[]> {
 export async function getCurrentUser(): Promise<DashboardUser | null> {
   const user = await prisma.user.findUnique({
     where: { email: 'demo@errorstash.io' },
-    select: { id: true, name: true, email: true },
+    select: { id: true, name: true, email: true, isPro: true },
   })
   return user
 }

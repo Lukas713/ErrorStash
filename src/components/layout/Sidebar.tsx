@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin } from "lucide-react"
+import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useDashboard, type Category } from "@/context/dashboard-context"
@@ -11,29 +11,21 @@ interface SidebarProps {
   onToggle: () => void
 }
 
+const TAGS_INITIAL = 10
+const TAGS_STEP = 5
+
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [categoriesOpen, setCategoriesOpen] = useState(true)
   const [tagsOpen, setTagsOpen] = useState(true)
-  const { activeCategory, setActiveCategory, entries, user } = useDashboard()
+  const [visibleTagCount, setVisibleTagCount] = useState(TAGS_INITIAL)
+  const [tagSearch, setTagSearch] = useState('')
+  const { activeCategory, setActiveCategory, entries, user, tags } = useDashboard()
 
   const allCount = entries.length
   const solvedCount = entries.filter(e => e.status === "SOLVED").length
   const unsolvedCount = entries.filter(e => e.status === "UNSOLVED").length
   const favoritesCount = entries.filter(e => e.isFavorite).length
   const pinnedCount = entries.filter(e => e.isPinned).length
-
-  const tagsWithCounts = Object.values(
-    entries.reduce<Record<string, { id: string; name: string; count: number }>>((acc, entry) => {
-      entry.tags.forEach(tag => {
-        if (acc[tag.id]) {
-          acc[tag.id].count++
-        } else {
-          acc[tag.id] = { ...tag, count: 1 }
-        }
-      })
-      return acc
-    }, {})
-  ).sort((a, b) => b.count - a.count)
 
   return (
     <>
@@ -115,14 +107,51 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </button>
                 {tagsOpen && (
                   <nav className="flex flex-col gap-0.5">
-                    {tagsWithCounts.map(tag => (
-                      <NavItem
-                        key={tag.id}
-                        icon={<Tag className="size-3.5" />}
-                        label={tag.name}
-                        count={tag.count}
+                    <div className="relative mb-1 px-0.5">
+                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-sidebar-foreground/40" />
+                      <input
+                        type="text"
+                        value={tagSearch}
+                        onChange={e => { setTagSearch(e.target.value); setVisibleTagCount(TAGS_INITIAL) }}
+                        placeholder="Search tags…"
+                        className="h-6 w-full rounded bg-sidebar-accent pl-6 pr-2 text-xs text-sidebar-foreground placeholder:text-sidebar-foreground/30 focus:outline-none focus:ring-1 focus:ring-sidebar-border"
                       />
-                    ))}
+                    </div>
+                    {tags
+                      .filter(t => t.name.toLowerCase().includes(tagSearch.toLowerCase()))
+                      .slice(0, visibleTagCount)
+                      .map(tag => (
+                        <NavItem
+                          key={tag.id}
+                          icon={<Tag className="size-3.5" />}
+                          label={tag.name}
+                          count={tag.count}
+                        />
+                      ))}
+                    {(() => {
+                      const filtered = tags.filter(t => t.name.toLowerCase().includes(tagSearch.toLowerCase()))
+                      if (visibleTagCount < filtered.length) {
+                        return (
+                          <button
+                            onClick={() => setVisibleTagCount(prev => prev + TAGS_STEP)}
+                            className="mt-0.5 px-2 py-1.5 text-left text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
+                          >
+                            Load more ({filtered.length - visibleTagCount} remaining)
+                          </button>
+                        )
+                      }
+                      if (visibleTagCount > TAGS_INITIAL && filtered.length > TAGS_INITIAL) {
+                        return (
+                          <button
+                            onClick={() => setVisibleTagCount(TAGS_INITIAL)}
+                            className="mt-0.5 px-2 py-1.5 text-left text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground/70"
+                          >
+                            Close all
+                          </button>
+                        )
+                      }
+                      return null
+                    })()}
                   </nav>
                 )}
               </section>
