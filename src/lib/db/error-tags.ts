@@ -30,13 +30,15 @@ export async function getTagsWithCounts(userId: string, isPro: boolean): Promise
 
   const tags = await prisma.tag.findMany({
     where: { userId },
-    include: {
-      entries: { select: { errorEntryId: true } },
+    select: {
+      id: true,
+      name: true,
+      _count: { select: { entries: true } },
     },
   })
 
   return tags
-    .map(tag => ({ id: tag.id, name: tag.name, count: tag.entries.length }))
+    .map(tag => ({ id: tag.id, name: tag.name, count: tag._count.entries }))
     .filter(t => t.count > 0)
     .sort((a, b) => b.count - a.count)
 }

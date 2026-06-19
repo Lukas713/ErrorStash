@@ -1,16 +1,60 @@
 # Current Feature
 
+## Quick Wins — Minor Performance & Quality Fixes
+
 ## Status
 
+In Progress
+
 ## Goals
+
+Bundle of low-risk, no-schema, no-auth fixes surfaced by the code-scanner review.
+
+### 1. `getTagsWithCounts()` non-pro path — replace include with `_count`
+- **File**: `src/lib/db/error-tags.ts`
+- Replace `include: { entries: { select: { errorEntryId: true } } }` + JS `.length` with Prisma's `_count: { select: { entries: true } }`. Avoids loading join rows into memory just to count them.
+
+### 2. Sidebar category counts — add `useMemo`
+- **File**: `src/components/layout/Sidebar.tsx`
+- Five `.filter()` calls on `entries` run on every render (including every keystroke in tag search). Wrap in a single `useMemo` keyed on `entries`.
+
+### 3. Prisma singleton — explicit env var guard
+- **File**: `src/lib/prisma.ts`
+- Replace `process.env.DATABASE_URL!` with an explicit check that throws `"DATABASE_URL environment variable is not set"` instead of a confusing adapter-level crash.
+
+### 4. Move `bcryptjs` to `devDependencies`
+- **File**: `package.json`
+- `bcryptjs` is only used in `prisma/seed.ts` (a dev-time script). Moving it to `devDependencies` keeps it out of the production bundle.
+
+### 5. Remove or wire up unused `geistMono` font
+- **File**: `src/app/layout.tsx`, `src/app/globals.css`
+- `Geist_Mono` is imported and its CSS variable injected but never referenced in CSS. Either add `--font-mono: var(--font-geist-mono)` to the `@theme` block (good for stack trace code blocks), or remove the import.
+
+### 6. Move `formatDate` to `src/lib/`
+- **File**: `src/components/errors/ErrorCard.tsx` → `src/lib/format.ts`
+- Pure utility function defined inline in a component file; move per project standards.
+
+### 7. Make `onMenuClick` required in `TopBar`
+- **File**: `src/components/layout/TopBar.tsx`
+- Prop is typed optional (`onMenuClick?`) but always provided at the only call site. Make it required and remove the dead-code guard inside the component.
+
+## Scope
+
+- `src/lib/db/error-tags.ts` — non-pro query only
+- `src/components/layout/Sidebar.tsx` — useMemo for counts
+- `src/lib/prisma.ts` — env guard
+- `package.json` — devDeps
+- `src/app/layout.tsx` + `src/app/globals.css` — font cleanup
+- `src/components/errors/ErrorCard.tsx` + `src/lib/format.ts` — formatDate move
+- `src/components/layout/TopBar.tsx` — prop type
+
+No schema changes, no migrations, no authentication changes.
 
 ## Notes
 
 ## Previous Feature
 
-Sidebar — Pro Badge (Completed)
-
-- Spec: `context/features/add-pro-badge-sidebar.md`
+Fix: Pro Tag Query Full Table Scan (Completed)
 
 ## History
 
