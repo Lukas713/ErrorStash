@@ -1,10 +1,7 @@
 import { Pin, Star, Globe, Lock, CheckCircle, AlertCircle } from 'lucide-react'
 import type { ErrorEntryWithTags } from '@/lib/db/errors'
 import { cn } from '@/lib/utils'
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-}
+import { formatDate } from '@/lib/format'
 
 export default function ErrorCard({ entry }: { entry: ErrorEntryWithTags }) {
   return (

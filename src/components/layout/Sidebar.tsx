@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,11 +22,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [tagSearch, setTagSearch] = useState('')
   const { activeCategory, setActiveCategory, activeTags, toggleTag, entries, user, tags } = useDashboard()
 
-  const allCount = entries.length
-  const solvedCount = entries.filter(e => e.status === "SOLVED").length
-  const unsolvedCount = entries.filter(e => e.status === "UNSOLVED").length
-  const favoritesCount = entries.filter(e => e.isFavorite).length
-  const pinnedCount = entries.filter(e => e.isPinned).length
+  const { allCount, solvedCount, unsolvedCount, favoritesCount, pinnedCount } = useMemo(() => ({
+    allCount: entries.length,
+    solvedCount: entries.filter(e => e.status === "SOLVED").length,
+    unsolvedCount: entries.filter(e => e.status === "UNSOLVED").length,
+    favoritesCount: entries.filter(e => e.isFavorite).length,
+    pinnedCount: entries.filter(e => e.isPinned).length,
+  }), [entries])
 
   return (
     <>
