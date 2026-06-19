@@ -1,0 +1,2 @@
+- [Project Architecture](project-architecture.md) — Data flow patterns, client/server boundary, what is and isn't built yet (as of 2026-06-19)
+- [Known Issues](known-issues.md) — Findings from the 2026-06-19 full codebase review, grouped by severity
