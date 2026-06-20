@@ -40,3 +40,9 @@ public/         # static assets served at /
 ```
 
 All routes live under `src/app/`. New pages are added as `src/app/<segment>/page.tsx`.
+
+## Neon MCP
+
+- Project: **ErrorStash** (`mute-bar-00478975`)
+- Default branch: **development** (`br-quiet-waterfall-asdwzgsw`)
+- **Never query or modify the production branch** (`br-bold-field-askwnb9i`) unless explicitly told to
