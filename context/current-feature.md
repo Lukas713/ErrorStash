@@ -1,31 +1,14 @@
-# Current Feature: Email Verification on Register
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
-
-- After a user registers with email/password, send a verification email via Resend
-- Email contains a unique link the user must click to verify their account
-- Unverified users are blocked from accessing `/dashboard` until verified
-- Verified users continue normally (no extra friction after verification)
-- Resend API key is already present in `.env.local` and `.env.production` as `RESEND_API_KEY`
 
 ## Notes
 
-- Use Resend (`resend` npm package) for sending emails
-- NextAuth's `emailVerified` field on the `User` model already exists in the Prisma schema — use it
-- Verification tokens should be stored in the `VerificationToken` model (already in schema) with `identifier` = email, `token` = unique UUID, `expires` = 24 hours
-- Verification link: `GET /api/auth/verify-email?token=<token>` — validates token, sets `emailVerified`, redirects to `/dashboard`
-- GitHub OAuth users skip email verification (already trusted via OAuth)
-- Middleware (`proxy.ts`) should block unverified credentials users from `/dashboard` — redirect to a `/verify-email` page that says "Check your inbox"
-- After verification, a welcome toast should show (reuse the `?welcome=1` pattern)
-- No re-send flow needed for v1
-
 ## Previous Feature
 
-Auth Setup: NextAuth + GitHub Provider (Completed)
+Email Verification on Register (Completed)
 
 ## History
 
@@ -42,3 +25,4 @@ Auth Setup: NextAuth + GitHub Provider (Completed)
 - **2026-06-20** — Auth setup: NextAuth v5 (next-auth@beta) + GitHub OAuth + PrismaAdapter; split config pattern (auth.config.ts / auth.ts); JWT session strategy with session/jwt callbacks to expose user.id; proxy.ts protects /dashboard/* and redirects unauthenticated users to sign-in; .mcp.json added to .gitignore and untracked (commit `ba89993`)
 - **2026-06-20** — Auth Credentials phase 2: Credentials provider added to auth.config.ts (authorize: null placeholder for Edge); overridden in auth.ts with bcrypt validation (deduplicating via explicit GitHub + Credentials list); POST /api/auth/register route with password match, min-length, duplicate email checks and bcrypt hash (cost 12); bcryptjs moved to dependencies (commit `fa190bf`)
 - **2026-06-22** — Auth UI phase 3: custom `/sign-in` (email/password + GitHub OAuth) and `/register` pages; reusable `UserAvatar` component (GitHub image or initials fallback); `SidebarUserMenu` replaces static footer with avatar button, name, Pro badge, and dropdown (Profile link + Sign out); `getCurrentUser()` now reads real session via `auth()`; `sonner` Toaster added to root layout; success toast on register (client-side) and sign-in (both providers via `?welcome=1` redirect param + `WelcomeToast` client component) (commit `acafdd2`)
+- **2026-06-22** — Email verification on register: `resend` package + `src/lib/email.ts` sends verification email via `onboarding@resend.dev`; `VerificationToken` stored in DB with 24h expiry; `GET /api/auth/verify-email` validates token, sets `emailVerified`, redirects to `/dashboard?welcome=1`; `/verify-email` page shows "Check your inbox"; `proxy.ts` blocks unverified credentials users from `/dashboard`; `auth.ts` exposes `emailVerified` in JWT/session and auto-verifies GitHub OAuth users on first sign-in (commit `94e0a02`)
