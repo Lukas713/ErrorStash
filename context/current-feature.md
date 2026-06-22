@@ -1,24 +1,10 @@
-# Current Feature: Auth UI — Sign In, Register & Sign Out
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Custom `/sign-in` page with email/password fields and GitHub OAuth button
-- Custom `/register` page with name, email, password, confirm password fields and validation
-- Sidebar bottom: user avatar (GitHub image or initials fallback) with dropdown containing "Sign out"
-- Clicking avatar navigates to `/profile`
-- Reusable avatar component handling both GitHub image and initials cases
-
 ## Notes
-
-- Sign-in page: email + password inputs, "Sign in with GitHub" button, link to register
-- Register page: submits to `POST /api/auth/register`, redirects to sign-in on success
-- Avatar initials: derive from name (e.g. "Lukas Scharmitzer" → "LS")
-- Dropdown on avatar click shows "Sign out" link
-- Replace NextAuth default pages by configuring custom `pages` in auth config
 
 ## Previous Feature
 
@@ -38,3 +24,4 @@ Auth Setup: NextAuth + GitHub Provider (Completed)
 - **2026-06-19** — Quick wins: replaced `include`+JS `.length` with `_count` in non-pro `getTagsWithCounts()`; wrapped sidebar category counts in `useMemo`; added explicit `DATABASE_URL` guard in Prisma singleton; moved `bcryptjs` to `devDependencies`; wired Geist Mono to `--font-mono` in `@theme`; extracted `formatDate` to `src/lib/format.ts`; made `onMenuClick` required in `TopBar` (commit `a9ba9ac`)
 - **2026-06-20** — Auth setup: NextAuth v5 (next-auth@beta) + GitHub OAuth + PrismaAdapter; split config pattern (auth.config.ts / auth.ts); JWT session strategy with session/jwt callbacks to expose user.id; proxy.ts protects /dashboard/* and redirects unauthenticated users to sign-in; .mcp.json added to .gitignore and untracked (commit `ba89993`)
 - **2026-06-20** — Auth Credentials phase 2: Credentials provider added to auth.config.ts (authorize: null placeholder for Edge); overridden in auth.ts with bcrypt validation (deduplicating via explicit GitHub + Credentials list); POST /api/auth/register route with password match, min-length, duplicate email checks and bcrypt hash (cost 12); bcryptjs moved to dependencies (commit `fa190bf`)
+- **2026-06-22** — Auth UI phase 3: custom `/sign-in` (email/password + GitHub OAuth) and `/register` pages; reusable `UserAvatar` component (GitHub image or initials fallback); `SidebarUserMenu` replaces static footer with avatar button, name, Pro badge, and dropdown (Profile link + Sign out); `getCurrentUser()` now reads real session via `auth()`; `sonner` Toaster added to root layout; success toast on register (client-side) and sign-in (both providers via `?welcome=1` redirect param + `WelcomeToast` client component) (commit `acafdd2`)
