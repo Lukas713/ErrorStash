@@ -3,9 +3,9 @@
 import { useState, useMemo } from "react"
 import { PanelLeft, Plus, CheckCircle, AlertCircle, Star, Tag, LayoutList, ChevronDown, Pin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useDashboard, type Category } from "@/context/dashboard-context"
+import SidebarUserMenu from "./SidebarUserMenu"
 
 interface SidebarProps {
   isOpen: boolean
@@ -164,32 +164,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           )}
         </div>
 
-        {/* User avatar */}
-        <div
-          className={cn(
-            "flex shrink-0 items-center gap-2 border-t border-sidebar-border p-2",
-            !isOpen && "md:justify-center md:p-1",
-          )}
-        >
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-            {user?.name
-              ? user.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase()
-              : user?.email.slice(0, 2).toUpperCase() ?? "?"}
-          </div>
-          {isOpen && (
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="truncate text-sm font-medium">{user?.name ?? user?.email}</p>
-                {user?.isPro && (
-                  <Badge variant="secondary" className="shrink-0 px-1.5 py-0 text-[10px] leading-4">
-                    Pro
-                  </Badge>
-                )}
-              </div>
-              <p className="truncate text-xs text-sidebar-foreground/50">{user?.email}</p>
-            </div>
-          )}
-        </div>
+        <SidebarUserMenu
+          name={user?.name}
+          email={user?.email}
+          image={user?.image}
+          isPro={user?.isPro}
+          isOpen={isOpen}
+        />
       </aside>
     </>
   )
