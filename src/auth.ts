@@ -57,7 +57,7 @@ export const {
           where: { id: user.id },
           select: { emailVerified: true },
         })
-        if (!dbUser?.emailVerified) {
+        if (dbUser && !dbUser.emailVerified) {
           await prisma.user.update({
             where: { id: user.id },
             data: { emailVerified: new Date() },
