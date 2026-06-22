@@ -1,28 +1,14 @@
-# Current Feature — Profile Page
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
-
-- Create `/profile` route with a protected page
-- Display user info: email, name, avatar (GitHub image or initials fallback), account creation date
-- Show usage stats: total error entries, total tags, breakdown by status (solved/unsolved)
-- Add "Change Password" action for email/password users only (not GitHub OAuth users)
-- Add "Delete Account" action with confirmation dialog to prevent accidental deletion
 
 ## Notes
 
-- Avatar logic mirrors existing `UserAvatar` component — use GitHub image if available, otherwise generate initials from name/email
-- Change password should reuse the reset-password flow or a similar in-page form
-- Delete account needs a confirmation dialog (ShadCN `AlertDialog`) before deleting
-- Route must be protected — redirect to `/sign-in` if unauthenticated (middleware already covers `/dashboard/*`; profile may need explicit protection)
-- Follow existing data fetching patterns: server component fetches via Prisma, client components for interactive actions
-
 ## Previous Feature
 
-Forgot Password (Completed)
+Profile Page (Completed)
 
 ## History
 
@@ -43,3 +29,4 @@ Forgot Password (Completed)
 - **2026-06-22** — Email verification toggle: `EMAIL_VERIFICATION_ENABLED` env var in `.env.local`; set to `"false"` to skip email send and auto-mark `emailVerified` on register (redirects to `/dashboard?welcome=1`); set to `"true"` or omit to use the full Resend verification flow; documented in `.env.example` (commit `f696ee6`)
 - **2026-06-22** — Forgot password: "Forgot password?" link on `/sign-in`; `/forgot-password` page + `ForgotPasswordForm`; `POST /api/auth/forgot-password` creates a `VerificationToken` with `password-reset:<email>` identifier (1h expiry) and sends reset email via Resend; `/reset-password` page validates token server-side before rendering `ResetPasswordForm`; `POST /api/auth/reset-password` hashes new password, updates user, deletes token (single-use); GitHub OAuth users get an inline error; redirects to `/sign-in` with success toast on completion (commit `e4aa7ea`)
 - **2026-06-22** — Auth route group: moved forgot-password, register, reset-password, sign-in, verify-email into `src/app/(auth)/`; added `(auth)/layout.tsx` with shared flex centering wrapper; URLs unchanged (commit `04e8959`)
+- **2026-06-22** — Profile page: `/profile` route protected by middleware; `src/lib/db/profile.ts` with `getProfileData()` fetches user info + stats (total entries, solved, unsolved, tags); `src/actions/user.ts` with `changePasswordAction` (bcrypt verify + update) and `deleteAccountAction` (delete user + signOut redirect); `ChangePasswordForm` inline expand/collapse with error handling; `DeleteAccountForm` with ShadCN `AlertDialog` confirmation; Change Password section only shown for email/password users (`hasPassword` flag); ShadCN `AlertDialog` component installed (commit `0afe184`)
