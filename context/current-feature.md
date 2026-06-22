@@ -1,10 +1,27 @@
-# Current Feature
+# Current Feature: Email Verification on Register
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- After a user registers with email/password, send a verification email via Resend
+- Email contains a unique link the user must click to verify their account
+- Unverified users are blocked from accessing `/dashboard` until verified
+- Verified users continue normally (no extra friction after verification)
+- Resend API key is already present in `.env.local` and `.env.production` as `RESEND_API_KEY`
+
 ## Notes
+
+- Use Resend (`resend` npm package) for sending emails
+- NextAuth's `emailVerified` field on the `User` model already exists in the Prisma schema — use it
+- Verification tokens should be stored in the `VerificationToken` model (already in schema) with `identifier` = email, `token` = unique UUID, `expires` = 24 hours
+- Verification link: `GET /api/auth/verify-email?token=<token>` — validates token, sets `emailVerified`, redirects to `/dashboard`
+- GitHub OAuth users skip email verification (already trusted via OAuth)
+- Middleware (`proxy.ts`) should block unverified credentials users from `/dashboard` — redirect to a `/verify-email` page that says "Check your inbox"
+- After verification, a welcome toast should show (reuse the `?welcome=1` pattern)
+- No re-send flow needed for v1
 
 ## Previous Feature
 
