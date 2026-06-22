@@ -38,22 +38,30 @@ export async function POST(request: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12)
+    const skipVerification = process.env.EMAIL_VERIFICATION_ENABLED === "false"
 
     const user = await prisma.user.create({
-      data: { name: name ?? null, email, password: hashedPassword },
+      data: {
+        name: name ?? null,
+        email,
+        password: hashedPassword,
+        ...(skipVerification ? { emailVerified: new Date() } : {}),
+      },
       select: { id: true, name: true, email: true },
     })
 
-    const token = randomUUID()
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    if (!skipVerification) {
+      const token = randomUUID()
+      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
-    await prisma.verificationToken.create({
-      data: { identifier: email, token, expires },
-    })
+      await prisma.verificationToken.create({
+        data: { identifier: email, token, expires },
+      })
 
-    await sendVerificationEmail(email, token)
+      await sendVerificationEmail(email, token)
+    }
 
-    return NextResponse.json({ success: true, user }, { status: 201 })
+    return NextResponse.json({ success: true, user, verified: skipVerification }, { status: 201 })
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }

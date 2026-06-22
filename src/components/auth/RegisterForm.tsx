@@ -36,8 +36,13 @@ export default function RegisterForm() {
         return
       }
 
-      toast.success("Account created! Check your email to verify your address.")
-      router.push("/verify-email")
+      if (json.verified) {
+        toast.success("Account created! Welcome to ErrorStash.")
+        router.push("/dashboard?welcome=1")
+      } else {
+        toast.success("Account created! Check your email to verify your address.")
+        router.push("/verify-email")
+      }
     } catch {
       setError("Something went wrong. Please try again.")
     } finally {
