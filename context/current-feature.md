@@ -1,10 +1,26 @@
-# Current Feature
+# Current Feature: Forgot Password
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Add a "Forgot password?" link on the `/sign-in` page
+- `POST /api/auth/forgot-password` — accepts email, creates a `VerificationToken` with a password-reset token and 1h expiry, sends a reset email via Resend
+- `GET /api/auth/reset-password?token=...` — validates token, renders a form to set a new password
+- `POST /api/auth/reset-password` — validates token again, hashes new password, updates `User.password`, deletes the used token
+- `/forgot-password` page — simple email input form
+- `/reset-password` page — new password + confirm password form
+- Reuse `VerificationToken` model (identifier = user email, token = random UUID, expires = now + 1h)
+- Show appropriate error/success toasts and redirect to `/sign-in` after reset
+
 ## Notes
+
+- Reuse `EMAIL_VERIFICATION_ENABLED` pattern for email — but reset emails are always sent (no toggle needed)
+- Identifier prefix: use `"password-reset:email@example.com"` to avoid collision with email-verification tokens that use plain email as identifier
+- Only Credentials users have a password; GitHub OAuth users should see a message that they signed up via GitHub and cannot reset a password
+- No rate limiting in v1 — keep it simple
 
 ## Previous Feature
 
