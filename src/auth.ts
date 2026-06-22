@@ -36,7 +36,13 @@ export const {
 
         if (!passwordMatch) return null
 
-        return { id: user.id, name: user.name, email: user.email, image: user.image }
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          emailVerified: user.emailVerified,
+        }
       },
     }),
   ],
@@ -44,12 +50,40 @@ export const {
   adapter: PrismaAdapter(prisma as any),
   session: { strategy: "jwt" },
   callbacks: {
-    jwt({ token, user }) {
-      if (user) token.id = user.id
+    async signIn({ user, account }) {
+      // Ensure OAuth users always have emailVerified set
+      if (account?.provider !== "credentials" && user.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { emailVerified: true },
+        })
+        if (!dbUser?.emailVerified) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { emailVerified: new Date() },
+          })
+        }
+      }
+      return true
+    },
+    async jwt({ token, user, trigger }) {
+      if (user) {
+        token.id = user.id
+        token.emailVerified = (user as { emailVerified?: Date | null }).emailVerified ?? null
+      }
+      // On session refresh, re-read emailVerified from DB in case user just verified
+      if (trigger === "update" || (!token.emailVerified && token.id)) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { emailVerified: true },
+        })
+        token.emailVerified = dbUser?.emailVerified ?? null
+      }
       return token
     },
     session({ session, token }) {
       session.user.id = token.id as string
+      session.user.emailVerified = (token.emailVerified as Date | null) ?? null
       return session
     },
   },

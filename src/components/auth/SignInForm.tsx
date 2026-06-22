@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { signInWithCredentials, signInWithGitHub } from "@/actions/auth"
 
-export default function SignInForm() {
-  const [error, formAction, isPending] = useActionState(signInWithCredentials, null)
+export default function SignInForm({ initialError }: { initialError?: string | null }) {
+  const [actionError, formAction, isPending] = useActionState(signInWithCredentials, null)
+  const error = actionError ?? initialError ?? null
 
   return (
     <div className="w-full max-w-sm space-y-6">
