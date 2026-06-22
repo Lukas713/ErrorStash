@@ -1,10 +1,20 @@
-# Current Feature
+# Current Feature: Email Verification Dev Toggle
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- In `development` mode (`NODE_ENV=development`), skip sending the verification email and auto-mark `emailVerified` on register
+- In `production`, keep the existing verification flow unchanged
+- Single place in the register route drives this — no changes needed in the proxy/middleware
+
 ## Notes
+
+- Resend is in test mode with no custom domain — only the owner's email can receive emails, blocking all other users from accessing the dashboard after registering
+- Solution: drive the skip off `NODE_ENV` (no env var, no config file needed — works correctly in both environments automatically)
+- Files to touch: `src/app/api/auth/register/route.ts`
 
 ## Previous Feature
 
