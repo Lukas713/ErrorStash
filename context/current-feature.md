@@ -1,10 +1,24 @@
-# Current Feature
+# Current Feature — Profile Page
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Create `/profile` route with a protected page
+- Display user info: email, name, avatar (GitHub image or initials fallback), account creation date
+- Show usage stats: total error entries, total tags, breakdown by status (solved/unsolved)
+- Add "Change Password" action for email/password users only (not GitHub OAuth users)
+- Add "Delete Account" action with confirmation dialog to prevent accidental deletion
+
 ## Notes
+
+- Avatar logic mirrors existing `UserAvatar` component — use GitHub image if available, otherwise generate initials from name/email
+- Change password should reuse the reset-password flow or a similar in-page form
+- Delete account needs a confirmation dialog (ShadCN `AlertDialog`) before deleting
+- Route must be protected — redirect to `/sign-in` if unauthenticated (middleware already covers `/dashboard/*`; profile may need explicit protection)
+- Follow existing data fetching patterns: server component fetches via Prisma, client components for interactive actions
 
 ## Previous Feature
 

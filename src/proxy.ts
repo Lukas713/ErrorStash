@@ -1,12 +1,16 @@
 import { auth } from "@/auth"
 
+const PROTECTED = (pathname: string) =>
+  pathname.startsWith("/dashboard") || pathname === "/profile"
+
 export const proxy = auth(async (req) => {
-  if (!req.auth && req.nextUrl.pathname.startsWith("/dashboard")) {
+  const { pathname } = req.nextUrl
+
+  if (!req.auth && PROTECTED(pathname)) {
     return Response.redirect(new URL("/sign-in", req.nextUrl.origin))
   }
 
-  // Block unverified credentials users from accessing the dashboard
-  if (req.auth && req.nextUrl.pathname.startsWith("/dashboard")) {
+  if (req.auth && PROTECTED(pathname)) {
     const emailVerified = req.auth.user?.emailVerified
     if (!emailVerified) {
       return Response.redirect(new URL("/verify-email", req.nextUrl.origin))
@@ -15,5 +19,5 @@ export const proxy = auth(async (req) => {
 })
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/profile"],
 }
