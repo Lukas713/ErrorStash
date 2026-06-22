@@ -13,4 +13,7 @@ export default {
       authorize: () => null,
     }),
   ],
+  pages: {
+    signIn: "/sign-in",
+  },
 } satisfies NextAuthConfig

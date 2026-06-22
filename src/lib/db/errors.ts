@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 
 export type ErrorEntryWithTags = {
@@ -18,6 +19,7 @@ export type DashboardUser = {
   id: string
   name: string | null
   email: string
+  image: string | null
   isPro: boolean
 }
 
@@ -47,9 +49,12 @@ export async function getErrorEntries(): Promise<ErrorEntryWithTags[]> {
 }
 
 export async function getCurrentUser(): Promise<DashboardUser | null> {
+  const session = await auth()
+  if (!session?.user?.id) return null
+
   const user = await prisma.user.findUnique({
-    where: { email: 'demo@errorstash.io' },
-    select: { id: true, name: true, email: true, isPro: true },
+    where: { id: session.user.id },
+    select: { id: true, name: true, email: true, image: true, isPro: true },
   })
   return user
 }
