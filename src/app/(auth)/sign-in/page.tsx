@@ -13,9 +13,5 @@ export default async function SignInPage({ searchParams }: Props) {
   const { error } = await searchParams
   const errorMessage = error ? (ERROR_MESSAGES[error] ?? null) : null
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <SignInForm initialError={errorMessage} />
-    </div>
-  )
+  return <SignInForm initialError={errorMessage} />
 }
