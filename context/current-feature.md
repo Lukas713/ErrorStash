@@ -1,24 +1,14 @@
-# Current Feature: Email Verification Dev Toggle
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
-
-- In `development` mode (`NODE_ENV=development`), skip sending the verification email and auto-mark `emailVerified` on register
-- In `production`, keep the existing verification flow unchanged
-- Single place in the register route drives this — no changes needed in the proxy/middleware
 
 ## Notes
 
-- Resend is in test mode with no custom domain — only the owner's email can receive emails, blocking all other users from accessing the dashboard after registering
-- Solution: drive the skip off `NODE_ENV` (no env var, no config file needed — works correctly in both environments automatically)
-- Files to touch: `src/app/api/auth/register/route.ts`
-
 ## Previous Feature
 
-Email Verification on Register (Completed)
+Email Verification Dev Toggle (Completed)
 
 ## History
 
@@ -36,3 +26,4 @@ Email Verification on Register (Completed)
 - **2026-06-20** — Auth Credentials phase 2: Credentials provider added to auth.config.ts (authorize: null placeholder for Edge); overridden in auth.ts with bcrypt validation (deduplicating via explicit GitHub + Credentials list); POST /api/auth/register route with password match, min-length, duplicate email checks and bcrypt hash (cost 12); bcryptjs moved to dependencies (commit `fa190bf`)
 - **2026-06-22** — Auth UI phase 3: custom `/sign-in` (email/password + GitHub OAuth) and `/register` pages; reusable `UserAvatar` component (GitHub image or initials fallback); `SidebarUserMenu` replaces static footer with avatar button, name, Pro badge, and dropdown (Profile link + Sign out); `getCurrentUser()` now reads real session via `auth()`; `sonner` Toaster added to root layout; success toast on register (client-side) and sign-in (both providers via `?welcome=1` redirect param + `WelcomeToast` client component) (commit `acafdd2`)
 - **2026-06-22** — Email verification on register: `resend` package + `src/lib/email.ts` sends verification email via `onboarding@resend.dev`; `VerificationToken` stored in DB with 24h expiry; `GET /api/auth/verify-email` validates token, sets `emailVerified`, redirects to `/dashboard?welcome=1`; `/verify-email` page shows "Check your inbox"; `proxy.ts` blocks unverified credentials users from `/dashboard`; `auth.ts` exposes `emailVerified` in JWT/session and auto-verifies GitHub OAuth users on first sign-in (commit `94e0a02`)
+- **2026-06-22** — Email verification toggle: `EMAIL_VERIFICATION_ENABLED` env var in `.env.local`; set to `"false"` to skip email send and auto-mark `emailVerified` on register (redirects to `/dashboard?welcome=1`); set to `"true"` or omit to use the full Resend verification flow; documented in `.env.example` (commit `f696ee6`)
