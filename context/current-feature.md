@@ -1,30 +1,14 @@
-# Current Feature: Forgot Password
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
-
-- Add a "Forgot password?" link on the `/sign-in` page
-- `POST /api/auth/forgot-password` — accepts email, creates a `VerificationToken` with a password-reset token and 1h expiry, sends a reset email via Resend
-- `GET /api/auth/reset-password?token=...` — validates token, renders a form to set a new password
-- `POST /api/auth/reset-password` — validates token again, hashes new password, updates `User.password`, deletes the used token
-- `/forgot-password` page — simple email input form
-- `/reset-password` page — new password + confirm password form
-- Reuse `VerificationToken` model (identifier = user email, token = random UUID, expires = now + 1h)
-- Show appropriate error/success toasts and redirect to `/sign-in` after reset
 
 ## Notes
 
-- Reuse `EMAIL_VERIFICATION_ENABLED` pattern for email — but reset emails are always sent (no toggle needed)
-- Identifier prefix: use `"password-reset:email@example.com"` to avoid collision with email-verification tokens that use plain email as identifier
-- Only Credentials users have a password; GitHub OAuth users should see a message that they signed up via GitHub and cannot reset a password
-- No rate limiting in v1 — keep it simple
-
 ## Previous Feature
 
-Email Verification Dev Toggle (Completed)
+Forgot Password (Completed)
 
 ## History
 
@@ -43,3 +27,4 @@ Email Verification Dev Toggle (Completed)
 - **2026-06-22** — Auth UI phase 3: custom `/sign-in` (email/password + GitHub OAuth) and `/register` pages; reusable `UserAvatar` component (GitHub image or initials fallback); `SidebarUserMenu` replaces static footer with avatar button, name, Pro badge, and dropdown (Profile link + Sign out); `getCurrentUser()` now reads real session via `auth()`; `sonner` Toaster added to root layout; success toast on register (client-side) and sign-in (both providers via `?welcome=1` redirect param + `WelcomeToast` client component) (commit `acafdd2`)
 - **2026-06-22** — Email verification on register: `resend` package + `src/lib/email.ts` sends verification email via `onboarding@resend.dev`; `VerificationToken` stored in DB with 24h expiry; `GET /api/auth/verify-email` validates token, sets `emailVerified`, redirects to `/dashboard?welcome=1`; `/verify-email` page shows "Check your inbox"; `proxy.ts` blocks unverified credentials users from `/dashboard`; `auth.ts` exposes `emailVerified` in JWT/session and auto-verifies GitHub OAuth users on first sign-in (commit `94e0a02`)
 - **2026-06-22** — Email verification toggle: `EMAIL_VERIFICATION_ENABLED` env var in `.env.local`; set to `"false"` to skip email send and auto-mark `emailVerified` on register (redirects to `/dashboard?welcome=1`); set to `"true"` or omit to use the full Resend verification flow; documented in `.env.example` (commit `f696ee6`)
+- **2026-06-22** — Forgot password: "Forgot password?" link on `/sign-in`; `/forgot-password` page + `ForgotPasswordForm`; `POST /api/auth/forgot-password` creates a `VerificationToken` with `password-reset:<email>` identifier (1h expiry) and sends reset email via Resend; `/reset-password` page validates token server-side before rendering `ResetPasswordForm`; `POST /api/auth/reset-password` hashes new password, updates user, deletes token (single-use); GitHub OAuth users get an inline error; redirects to `/sign-in` with success toast on completion (commit `e4aa7ea`)
