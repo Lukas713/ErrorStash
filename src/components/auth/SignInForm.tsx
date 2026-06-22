@@ -34,14 +34,24 @@ export default function SignInForm({ initialError }: { initialError?: string | n
             autoComplete="email"
             disabled={isPending}
           />
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            autoComplete="current-password"
-            disabled={isPending}
-          />
+          <div className="space-y-1">
+            <Input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+              autoComplete="current-password"
+              disabled={isPending}
+            />
+            <div className="text-right">
+              <Link
+                href="/forgot-password"
+                className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
         </div>
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Signing in…" : "Sign in"}
