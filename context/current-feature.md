@@ -1,10 +1,48 @@
-# Current Feature
+# Current Feature: Rate Limiting for Auth
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- Add rate limiting to all auth-related API routes to prevent brute force and abuse
+- Use Upstash Redis with `@upstash/ratelimit` (serverless-compatible)
+- Create a reusable `src/lib/rate-limit.ts` utility
+- Return 429 Too Many Requests with `Retry-After` header on limit exceeded
+- Display user-friendly error messages on the frontend via toast
+
 ## Notes
+
+### Endpoints to Protect
+
+| Endpoint | Limit | Window | Key By |
+|----------|-------|--------|--------|
+| `/api/auth/callback/credentials` (login) | 5 attempts | 15 min | IP + email |
+| `/api/auth/register` | 3 attempts | 1 hour | IP |
+| `/api/auth/forgot-password` | 3 attempts | 1 hour | IP |
+| `/api/auth/reset-password` | 5 attempts | 15 min | IP |
+| `/api/auth/resend-verification` | 3 attempts | 15 min | IP + email |
+
+### Implementation Details
+
+- Sliding window algorithm
+- Extract IP from `x-forwarded-for` header (Vercel) or request
+- Combine IP + email where applicable for tighter limits
+- Rate limiting should **fail open** (allow request) if Upstash is unavailable
+- Login limiting with NextAuth credentials requires a custom sign-in handler
+
+### Environment Variables Required
+
+```
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
+### Error Response Format
+
+- API: `{ error: "Too many attempts. Please try again in X minutes." }` with 429 status + `Retry-After` header
+- Frontend: toast notification
 
 ## Previous Feature
 

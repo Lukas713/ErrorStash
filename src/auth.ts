@@ -5,6 +5,7 @@ import GitHub from "next-auth/providers/github"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 import authConfig from "@/auth.config"
+import { checkRateLimit } from "@/lib/rate-limit"
 
 export const {
   handlers: { GET, POST },
@@ -20,11 +21,16 @@ export const {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         if (!credentials?.email || !credentials?.password) return null
 
+        const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown"
+        const email = credentials.email as string
+        const rl = await checkRateLimit(`login:${ip}:${email}`, 5, "15 m")
+        if (!rl.success) throw new Error("RATE_LIMITED")
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email },
         })
 
         if (!user?.password) return null
