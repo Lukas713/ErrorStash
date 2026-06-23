@@ -1,10 +1,21 @@
-# Current Feature
+# Current Feature: Error Create
 
 ## Status
 
+In Progress
+
 ## Goals
 
+- "New Entry" or "New" button in top bar opens a modal dialog
+- Form fields: title (required), status, description, stack trace, solution, tags
+- Server action `createError` with Zod validation
+- DB query function `createError` in `lib/db/errors.ts`
+- Toast on success; modal closes and list refreshes
+
 ## Notes
+
+- Use ShadCN `Dialog` component
+- Reference screenshot: `context/screenshots/dashboard-ui-drawer-new-entry.png`
 
 ## Previous Feature
 
