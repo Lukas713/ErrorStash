@@ -1,25 +1,20 @@
-# Current Feature: Error Create
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- "New Entry" or "New" button in top bar opens a modal dialog
-- Form fields: title (required), status, description, stack trace, solution, tags
-- Server action `createError` with Zod validation
-- DB query function `createError` in `lib/db/errors.ts`
-- Toast on success; modal closes and list refreshes
+<!-- Add goals here -->
 
 ## Notes
 
-- Use ShadCN `Dialog` component
-- Reference screenshot: `context/screenshots/dashboard-ui-drawer-new-entry.png`
+<!-- Add notes here -->
 
 ## Previous Feature
 
-Profile Page (Completed)
+Error Create (Completed)
 
 ## History
 
@@ -42,3 +37,4 @@ Profile Page (Completed)
 - **2026-06-22** — Auth route group: moved forgot-password, register, reset-password, sign-in, verify-email into `src/app/(auth)/`; added `(auth)/layout.tsx` with shared flex centering wrapper; URLs unchanged (commit `04e8959`)
 - **2026-06-22** — Profile page: `/profile` route protected by middleware; `src/lib/db/profile.ts` with `getProfileData()` fetches user info + stats (total entries, solved, unsolved, tags); `src/actions/user.ts` with `changePasswordAction` (bcrypt verify + update) and `deleteAccountAction` (delete user + signOut redirect); `ChangePasswordForm` inline expand/collapse with error handling; `DeleteAccountForm` with ShadCN `AlertDialog` confirmation; Change Password section only shown for email/password users (`hasPassword` flag); ShadCN `AlertDialog` component installed (commit `0afe184`)
 - **2026-06-23** — Rate limiting for auth: `@upstash/ratelimit` + `@upstash/redis` installed; `src/lib/rate-limit.ts` utility with sliding-window `checkRateLimit`, `getIP`, and `rateLimitResponse`; register (3/hr IP), forgot-password (3/hr IP), reset-password (5/15min IP) rate limited in route handlers; login credentials (5/15min IP+email) rate limited in `authorize` callback via thrown Error caught as `CallbackRouteError`; fails open when Upstash env vars absent; `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` added to `.env.example` (commit `7e3f78d`)
+- **2026-06-23** — Error Create: "New" button in top bar opens a right-side Sheet drawer (slides in from right on desktop and mobile); form fields: title (required), status toggle pills (Unsolved/Solved), description, stack trace, solution, tag pill input (Enter/comma to add), visibility toggle (Private/Public); `createErrorAction` server action with Zod validation; `createErrorEntry` DB function in `lib/db/errors.ts`; `isPublic` wired end-to-end; toast on success, drawer closes and list refreshes (commit `76ae6c2`)
