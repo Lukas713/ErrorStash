@@ -1,48 +1,10 @@
-# Current Feature: Rate Limiting for Auth
+# Current Feature
 
 ## Status
 
-In Progress
-
 ## Goals
 
-- Add rate limiting to all auth-related API routes to prevent brute force and abuse
-- Use Upstash Redis with `@upstash/ratelimit` (serverless-compatible)
-- Create a reusable `src/lib/rate-limit.ts` utility
-- Return 429 Too Many Requests with `Retry-After` header on limit exceeded
-- Display user-friendly error messages on the frontend via toast
-
 ## Notes
-
-### Endpoints to Protect
-
-| Endpoint | Limit | Window | Key By |
-|----------|-------|--------|--------|
-| `/api/auth/callback/credentials` (login) | 5 attempts | 15 min | IP + email |
-| `/api/auth/register` | 3 attempts | 1 hour | IP |
-| `/api/auth/forgot-password` | 3 attempts | 1 hour | IP |
-| `/api/auth/reset-password` | 5 attempts | 15 min | IP |
-| `/api/auth/resend-verification` | 3 attempts | 15 min | IP + email |
-
-### Implementation Details
-
-- Sliding window algorithm
-- Extract IP from `x-forwarded-for` header (Vercel) or request
-- Combine IP + email where applicable for tighter limits
-- Rate limiting should **fail open** (allow request) if Upstash is unavailable
-- Login limiting with NextAuth credentials requires a custom sign-in handler
-
-### Environment Variables Required
-
-```
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-```
-
-### Error Response Format
-
-- API: `{ error: "Too many attempts. Please try again in X minutes." }` with 429 status + `Retry-After` header
-- Frontend: toast notification
 
 ## Previous Feature
 
@@ -68,3 +30,4 @@ Profile Page (Completed)
 - **2026-06-22** — Forgot password: "Forgot password?" link on `/sign-in`; `/forgot-password` page + `ForgotPasswordForm`; `POST /api/auth/forgot-password` creates a `VerificationToken` with `password-reset:<email>` identifier (1h expiry) and sends reset email via Resend; `/reset-password` page validates token server-side before rendering `ResetPasswordForm`; `POST /api/auth/reset-password` hashes new password, updates user, deletes token (single-use); GitHub OAuth users get an inline error; redirects to `/sign-in` with success toast on completion (commit `e4aa7ea`)
 - **2026-06-22** — Auth route group: moved forgot-password, register, reset-password, sign-in, verify-email into `src/app/(auth)/`; added `(auth)/layout.tsx` with shared flex centering wrapper; URLs unchanged (commit `04e8959`)
 - **2026-06-22** — Profile page: `/profile` route protected by middleware; `src/lib/db/profile.ts` with `getProfileData()` fetches user info + stats (total entries, solved, unsolved, tags); `src/actions/user.ts` with `changePasswordAction` (bcrypt verify + update) and `deleteAccountAction` (delete user + signOut redirect); `ChangePasswordForm` inline expand/collapse with error handling; `DeleteAccountForm` with ShadCN `AlertDialog` confirmation; Change Password section only shown for email/password users (`hasPassword` flag); ShadCN `AlertDialog` component installed (commit `0afe184`)
+- **2026-06-23** — Rate limiting for auth: `@upstash/ratelimit` + `@upstash/redis` installed; `src/lib/rate-limit.ts` utility with sliding-window `checkRateLimit`, `getIP`, and `rateLimitResponse`; register (3/hr IP), forgot-password (3/hr IP), reset-password (5/15min IP) rate limited in route handlers; login credentials (5/15min IP+email) rate limited in `authorize` callback via thrown Error caught as `CallbackRouteError`; fails open when Upstash env vars absent; `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` added to `.env.example` (commit `7e3f78d`)
