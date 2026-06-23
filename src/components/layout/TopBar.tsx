@@ -1,6 +1,6 @@
-import { Search, Plus, Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { NewEntryDialog } from "@/components/errors/NewEntryDialog";
 
 export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   return (
@@ -21,10 +21,7 @@ export default function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
         </div>
       </div>
 
-      <Button size="sm" className="gap-1.5">
-        <Plus className="size-4" />
-        New
-      </Button>
+      <NewEntryDialog />
     </header>
   );
 }
