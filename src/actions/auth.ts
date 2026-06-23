@@ -18,6 +18,13 @@ export async function signInWithCredentials(
       switch (error.type) {
         case "CredentialsSignin":
           return "Invalid email or password."
+        case "CallbackRouteError": {
+          const cause = (error.cause as { err?: Error } | undefined)?.err
+          if (cause?.message === "RATE_LIMITED") {
+            return "Too many login attempts. Please try again in 15 minutes."
+          }
+          return "Something went wrong. Please try again."
+        }
         default:
           return "Something went wrong. Please try again."
       }
