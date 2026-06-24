@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ChevronDown, X } from 'lucide-react'
 import { useDashboard, CATEGORY_LABELS } from '@/context/dashboard-context'
 import ErrorCard from './ErrorCard'
+import { ErrorEntryDrawer } from './ErrorEntryDrawer'
 
 type SortOption = 'newest' | 'oldest'
 
@@ -13,7 +14,7 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ]
 
 export default function ErrorList() {
-  const { activeCategory, activeTags, toggleTag, entries } = useDashboard()
+  const { activeCategory, activeTags, toggleTag, entries, setSelectedEntryId } = useDashboard()
   const [sort, setSort] = useState<SortOption>('newest')
   const [sortOpen, setSortOpen] = useState(false)
 
@@ -37,6 +38,8 @@ export default function ErrorList() {
   })
 
   return (
+    <>
+    <ErrorEntryDrawer />
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -92,9 +95,16 @@ export default function ErrorList() {
         {sorted.length === 0 ? (
           <p className="px-4 py-8 text-center text-sm text-muted-foreground">No entries found.</p>
         ) : (
-          sorted.map(entry => <ErrorCard key={entry.id} entry={entry} />)
+          sorted.map(entry => (
+            <ErrorCard
+              key={entry.id}
+              entry={entry}
+              onClick={() => setSelectedEntryId(entry.id)}
+            />
+          ))
         )}
       </div>
     </div>
+    </>
   )
 }

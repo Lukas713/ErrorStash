@@ -3,11 +3,11 @@ import type { ErrorEntryWithTags } from '@/lib/db/errors'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
 
-export default function ErrorCard({ entry }: { entry: ErrorEntryWithTags }) {
+export default function ErrorCard({ entry, onClick }: { entry: ErrorEntryWithTags; onClick?: () => void }) {
   return (
-    <div className="flex cursor-pointer items-start gap-3 border-b border-border px-4 py-3 hover:bg-muted/30">
+    <div className="flex cursor-pointer items-start gap-3 border-b border-border px-4 py-3 hover:bg-muted/30" onClick={onClick}>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">{entry.title}</p>
+        <p className="truncate text-sm font-semibold text-foreground">{entry.title}</p>
 
         {entry.tags.length > 0 && (
           <div className="mt-1.5 flex flex-wrap gap-1">

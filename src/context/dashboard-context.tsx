@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ErrorEntryWithTags, DashboardUser } from '@/lib/db/errors'
 import type { TagWithCount } from '@/lib/db/error-tags'
 
@@ -20,10 +20,14 @@ interface DashboardContextValue {
   activeTags: string[]
   toggleTag: (tag: string) => void
   entries: ErrorEntryWithTags[]
+  updateEntry: (id: string, patch: Partial<Pick<ErrorEntryWithTags, 'isFavorite' | 'isPinned' | 'status' | 'isPublic'>>) => void
+  removeEntry: (id: string) => void
   user: DashboardUser | null
   tags: TagWithCount[]
   newEntryOpen: boolean
   setNewEntryOpen: (open: boolean) => void
+  selectedEntryId: string | null
+  setSelectedEntryId: (id: string | null) => void
 }
 
 const DashboardContext = createContext<DashboardContextValue | null>(null)
@@ -42,6 +46,10 @@ export function DashboardProvider({
   const [activeCategory, setActiveCategory] = useState<Category>('all')
   const [activeTags, setActiveTags] = useState<string[]>([])
   const [newEntryOpen, setNewEntryOpen] = useState(false)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [entries, setEntries] = useState(initialEntries)
+
+  useEffect(() => { setEntries(initialEntries) }, [initialEntries])
 
   function toggleTag(tag: string) {
     setActiveTags(prev =>
@@ -49,8 +57,23 @@ export function DashboardProvider({
     )
   }
 
+  function updateEntry(id: string, patch: Partial<Pick<ErrorEntryWithTags, 'isFavorite' | 'isPinned' | 'status' | 'isPublic'>>) {
+    setEntries(prev => prev.map(e => e.id === id ? { ...e, ...patch } : e))
+  }
+
+  function removeEntry(id: string) {
+    setEntries(prev => prev.filter(e => e.id !== id))
+  }
+
   return (
-    <DashboardContext.Provider value={{ activeCategory, setActiveCategory, activeTags, toggleTag, entries: initialEntries, user, tags: initialTags, newEntryOpen, setNewEntryOpen }}>
+    <DashboardContext.Provider value={{
+      activeCategory, setActiveCategory,
+      activeTags, toggleTag,
+      entries, updateEntry, removeEntry,
+      user, tags: initialTags,
+      newEntryOpen, setNewEntryOpen,
+      selectedEntryId, setSelectedEntryId,
+    }}>
       {children}
     </DashboardContext.Provider>
   )

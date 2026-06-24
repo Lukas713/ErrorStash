@@ -1,16 +1,23 @@
-# Current Feature
+# Current Feature: Error Entry Drawer
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add goals here -->
+- Clicking an ErrorCard opens a right-side Sheet drawer with that error's full detail
+- Action bar: Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, only visible for own entries)
+- Fetch full error data on click via `GET /api/errors/[id]` — no page navigation
+- Show skeleton/loading state while fetching
+- Client wrapper manages drawer open/close state (pages are server components)
 
 ## Notes
 
-<!-- Add notes here -->
+- Use the existing ShadCN Sheet component (same one used for New Entry)
+- Query function goes in `lib/db/errors.ts`; API route adds auth check before calling it
+- Code editor and other rich fields come in a later phase — just display data for now
+- Reference: `context/screenshots/dashboard-ui-drawer-open-error.png` (right side of image)
 
 ## Previous Feature
 
