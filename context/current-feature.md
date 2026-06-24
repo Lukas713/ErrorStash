@@ -1,27 +1,20 @@
-# Current Feature: Error Entry Drawer
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Clicking an ErrorCard opens a right-side Sheet drawer with that error's full detail
-- Action bar: Favorite (star, yellow when active), Pin, Copy, Edit (pencil), Delete (trash, only visible for own entries)
-- Fetch full error data on click via `GET /api/errors/[id]` — no page navigation
-- Show skeleton/loading state while fetching
-- Client wrapper manages drawer open/close state (pages are server components)
+<!-- Add goals here -->
 
 ## Notes
 
-- Use the existing ShadCN Sheet component (same one used for New Entry)
-- Query function goes in `lib/db/errors.ts`; API route adds auth check before calling it
-- Code editor and other rich fields come in a later phase — just display data for now
-- Reference: `context/screenshots/dashboard-ui-drawer-open-error.png` (right side of image)
+<!-- Add notes here -->
 
 ## Previous Feature
 
-Error Create (Completed)
+Error Entry Drawer (Completed)
 
 ## History
 
@@ -46,3 +39,4 @@ Error Create (Completed)
 - **2026-06-23** — Rate limiting for auth: `@upstash/ratelimit` + `@upstash/redis` installed; `src/lib/rate-limit.ts` utility with sliding-window `checkRateLimit`, `getIP`, and `rateLimitResponse`; register (3/hr IP), forgot-password (3/hr IP), reset-password (5/15min IP) rate limited in route handlers; login credentials (5/15min IP+email) rate limited in `authorize` callback via thrown Error caught as `CallbackRouteError`; fails open when Upstash env vars absent; `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` added to `.env.example` (commit `7e3f78d`)
 - **2026-06-23** — Error Create: "New" button in top bar opens a right-side Sheet drawer (slides in from right on desktop and mobile); form fields: title (required), status toggle pills (Unsolved/Solved), description, stack trace, solution, tag pill input (Enter/comma to add), visibility toggle (Private/Public); `createErrorAction` server action with Zod validation; `createErrorEntry` DB function in `lib/db/errors.ts`; `isPublic` wired end-to-end; toast on success, drawer closes and list refreshes (commit `76ae6c2`)
 - **2026-06-24** — Sidebar New Entry button: lifted new-entry open state into `DashboardContext`; sidebar "+ New Entry" button and top-bar "New" button both control the same Sheet instance (commit `38fe47b`)
+- **2026-06-24** — Error Entry Drawer: clicking an ErrorCard opens a right-side Sheet drawer with the entry's full detail, fetched on click via `GET /api/errors/[id]` (auth-checked) with a loading skeleton — no page navigation; `getErrorEntryById` + `ErrorEntryDetail` type in `lib/db/errors.ts`; `/api/errors/[id]` route with GET, PATCH (favorite/pin/visibility) and DELETE, all ownership-checked; `ErrorEntryDrawer` header merges title with Favorite/Edit/Delete/Close actions plus status/date/pinned meta (matching the open-error screenshot); collapsible Description, Stack Trace, Solution (markdown via `react-markdown` + `.prose` styles in globals.css), and Tags (blue pills with Tag icon); copy buttons on stack trace and solution; `DashboardContext` gains `selectedEntryId`, `updateEntry`, `removeEntry` for optimistic favorite/pin/visibility toggles; ErrorCard title typography aligned with ErrorList (commit `7d23edf`)
