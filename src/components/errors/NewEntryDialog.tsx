@@ -19,9 +19,10 @@ import {
 } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import { createErrorAction } from '@/actions/errors'
+import { useDashboard } from '@/context/dashboard-context'
 
 export function NewEntryDialog() {
-  const [open, setOpen] = useState(false)
+  const { newEntryOpen: open, setNewEntryOpen: setOpen } = useDashboard()
   const [formKey, setFormKey] = useState(0)
   const [isPending, startTransition] = useTransition()
   const [status, setStatus] = useState<'UNSOLVED' | 'SOLVED'>('UNSOLVED')

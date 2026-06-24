@@ -20,7 +20,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [tagsOpen, setTagsOpen] = useState(true)
   const [visibleTagCount, setVisibleTagCount] = useState(TAGS_INITIAL)
   const [tagSearch, setTagSearch] = useState('')
-  const { activeCategory, setActiveCategory, activeTags, toggleTag, entries, user, tags } = useDashboard()
+  const { activeCategory, setActiveCategory, activeTags, toggleTag, entries, user, tags, setNewEntryOpen } = useDashboard()
 
   const { allCount, solvedCount, unsolvedCount, favoritesCount, pinnedCount } = useMemo(() => ({
     allCount: entries.length,
@@ -68,7 +68,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <PanelLeft className="size-4" />
           </button>
           {isOpen && (
-            <Button size="sm" className="h-7 flex-1 gap-1 text-xs">
+            <Button size="sm" className="h-7 flex-1 gap-1 text-xs" onClick={() => setNewEntryOpen(true)}>
               <Plus className="size-3.5" />
               New Entry
             </Button>

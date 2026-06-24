@@ -22,6 +22,8 @@ interface DashboardContextValue {
   entries: ErrorEntryWithTags[]
   user: DashboardUser | null
   tags: TagWithCount[]
+  newEntryOpen: boolean
+  setNewEntryOpen: (open: boolean) => void
 }
 
 const DashboardContext = createContext<DashboardContextValue | null>(null)
@@ -39,6 +41,7 @@ export function DashboardProvider({
 }) {
   const [activeCategory, setActiveCategory] = useState<Category>('all')
   const [activeTags, setActiveTags] = useState<string[]>([])
+  const [newEntryOpen, setNewEntryOpen] = useState(false)
 
   function toggleTag(tag: string) {
     setActiveTags(prev =>
@@ -47,7 +50,7 @@ export function DashboardProvider({
   }
 
   return (
-    <DashboardContext.Provider value={{ activeCategory, setActiveCategory, activeTags, toggleTag, entries: initialEntries, user, tags: initialTags }}>
+    <DashboardContext.Provider value={{ activeCategory, setActiveCategory, activeTags, toggleTag, entries: initialEntries, user, tags: initialTags, newEntryOpen, setNewEntryOpen }}>
       {children}
     </DashboardContext.Provider>
   )
