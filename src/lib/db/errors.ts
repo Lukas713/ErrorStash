@@ -15,6 +15,11 @@ export type ErrorEntryWithTags = {
   tags: { id: string; name: string }[]
 }
 
+export type ErrorEntryDetail = ErrorEntryWithTags & {
+  userId: string
+  updatedAt: string
+}
+
 export type DashboardUser = {
   id: string
   name: string | null
@@ -46,6 +51,30 @@ export async function getErrorEntries(): Promise<ErrorEntryWithTags[]> {
     createdAt: entry.createdAt.toISOString(),
     tags: entry.tags.map(et => ({ id: et.tag.id, name: et.tag.name })),
   }))
+}
+
+export async function getErrorEntryById(id: string): Promise<ErrorEntryDetail | null> {
+  const entry = await prisma.errorEntry.findUnique({
+    where: { id },
+    include: { tags: { include: { tag: true } } },
+  })
+  if (!entry) return null
+
+  return {
+    id: entry.id,
+    title: entry.title,
+    description: entry.description,
+    stackTrace: entry.stackTrace,
+    solution: entry.solution,
+    status: entry.status,
+    isPublic: entry.isPublic,
+    isFavorite: entry.isFavorite,
+    isPinned: entry.isPinned,
+    createdAt: entry.createdAt.toISOString(),
+    updatedAt: entry.updatedAt.toISOString(),
+    userId: entry.userId,
+    tags: entry.tags.map(et => ({ id: et.tag.id, name: et.tag.name })),
+  }
 }
 
 export async function createErrorEntry(input: {
