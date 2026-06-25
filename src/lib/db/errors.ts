@@ -28,8 +28,18 @@ export type DashboardUser = {
   isPro: boolean
 }
 
-export async function getErrorEntries(): Promise<ErrorEntryWithTags[]> {
+export async function getErrorEntries(
+  userId: string,
+  isPro: boolean,
+): Promise<ErrorEntryWithTags[]> {
+  // Users only ever see their own entries; Pro users additionally see other
+  // users' public (community) entries.
+  const where = isPro
+    ? { OR: [{ userId }, { isPublic: true }] }
+    : { userId }
+
   const entries = await prisma.errorEntry.findMany({
+    where,
     include: {
       tags: {
         include: { tag: true },
