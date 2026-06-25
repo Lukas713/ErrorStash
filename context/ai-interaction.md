@@ -15,7 +15,7 @@ This is the common workflow that we will use for every single feature/fix:
 1. **Document** - Document the feature in @context/current-feature.md.
 2. **Branch** - Create new branch for feature, fix, etc
 3. **Implement** - Implement the feature/fix that I create in @context/current-feature.md
-4. **Test** - Verify it works in the browser. Implement unit testing later. Run `npm run build` and fix any errors
+4. **Test** - Verify it works in the browser. Add/update unit tests for any new or changed **server actions or utilities** (`vitest`, see Testing below) and run `npm test`. Then run `npm run build` and fix any errors
 5. **Iterate** - Iterate and change things if needed
 6. **Commit** - Only after build passes and everything works
 7. **Merge** - Merge to main
@@ -48,6 +48,23 @@ We will create a new branch for every feature/fix. Name branch **feature/[featur
 - Don't refactor unrelated code unless asked
 - Don't add "nice to have" features
 - Preserve existing patterns in the codebase
+
+## Testing
+
+We use **Vitest** for unit testing. Scope is intentionally narrow:
+
+- **Test** server actions (`src/actions/`) and utilities (`src/lib/`).
+- **Do NOT test** React components — verify those in the browser.
+- Test files are co-located next to the source as `*.test.ts`.
+- Mock external boundaries (`@/auth`, `@/lib/prisma`, `@/lib/db/*`) so tests never touch a real session or the Neon database. Use `vi.hoisted` for spies referenced inside `vi.mock` factories.
+- Tests run in a Node environment (no jsdom/React Testing Library).
+
+Commands:
+
+```bash
+npm test         # run all tests once
+npm run test:watch  # watch mode while developing
+```
 
 ## Code Review
 

@@ -2,15 +2,22 @@
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add goals here -->
+Set up Vitest for unit testing, scoped to **server actions and utilities only** (no component tests).
+
+- Install `vitest` + `vite-tsconfig-paths` as dev dependencies (node environment, no React/jsdom).
+- Add a `vitest.config.mts` that resolves the `@/` path alias and only picks up tests under `src/actions/` and `src/lib/`.
+- Add `test` / `test:watch` npm scripts.
+- Write initial tests proving the setup works (utilities + at least one server action with mocked `auth`/`prisma`/db).
+- Update the workflow in `context/ai-interaction.md` (the "implement unit testing later" step) and the commands list in `CLAUDE.md`.
 
 ## Notes
 
-<!-- Add notes here -->
+- Components are intentionally NOT tested — verify those in the browser as before.
+- Server actions are tested by mocking `@/auth`, `@/lib/prisma`, and the `@/lib/db/*` functions.
 
 ## Previous Feature
 
