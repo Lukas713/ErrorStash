@@ -14,7 +14,7 @@ Not Started
 
 ## Previous Feature
 
-Error Entry Drawer (Completed)
+Error List Visibility Scoping (Completed)
 
 ## History
 
@@ -40,3 +40,4 @@ Error Entry Drawer (Completed)
 - **2026-06-23** — Error Create: "New" button in top bar opens a right-side Sheet drawer (slides in from right on desktop and mobile); form fields: title (required), status toggle pills (Unsolved/Solved), description, stack trace, solution, tag pill input (Enter/comma to add), visibility toggle (Private/Public); `createErrorAction` server action with Zod validation; `createErrorEntry` DB function in `lib/db/errors.ts`; `isPublic` wired end-to-end; toast on success, drawer closes and list refreshes (commit `76ae6c2`)
 - **2026-06-24** — Sidebar New Entry button: lifted new-entry open state into `DashboardContext`; sidebar "+ New Entry" button and top-bar "New" button both control the same Sheet instance (commit `38fe47b`)
 - **2026-06-24** — Error Entry Drawer: clicking an ErrorCard opens a right-side Sheet drawer with the entry's full detail, fetched on click via `GET /api/errors/[id]` (auth-checked) with a loading skeleton — no page navigation; `getErrorEntryById` + `ErrorEntryDetail` type in `lib/db/errors.ts`; `/api/errors/[id]` route with GET, PATCH (favorite/pin/visibility) and DELETE, all ownership-checked; `ErrorEntryDrawer` header merges title with Favorite/Edit/Delete/Close actions plus status/date/pinned meta (matching the open-error screenshot); collapsible Description, Stack Trace, Solution (markdown via `react-markdown` + `.prose` styles in globals.css), and Tags (blue pills with Tag icon); copy buttons on stack trace and solution; `DashboardContext` gains `selectedEntryId`, `updateEntry`, `removeEntry` for optimistic favorite/pin/visibility toggles; ErrorCard title typography aligned with ErrorList (commit `7d23edf`)
+- **2026-06-25** — Error List Visibility Scoping: `getErrorEntries(userId, isPro)` now filters the dashboard list — non-pro users see only their own entries (`where: { userId }`), pro users additionally see other users' public community entries (`where: { OR: [{ userId }, { isPublic: true }] }`); previously `findMany()` had no `where` and returned every entry in the DB to everyone; dashboard layout passes the resolved user's `id`/`isPro` in; also hardened `GET /api/errors/[id]` with the same rule (it previously returned any entry to any authenticated user) — owner always, others only if the entry is public and the viewer is pro, else 404; PATCH/DELETE remain owner-only (commit `8c12e53`)
