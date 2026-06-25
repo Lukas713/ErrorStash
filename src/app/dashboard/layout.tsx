@@ -9,7 +9,7 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
   const [entries, tags] = await Promise.all([
-    getErrorEntries(),
+    getErrorEntries(user?.id ?? '', user?.isPro ?? false),
     getTagsWithCounts(user?.id ?? '', user?.isPro ?? false),
   ]);
   return <DashboardShell entries={entries} tags={tags} user={user}>{children}</DashboardShell>;

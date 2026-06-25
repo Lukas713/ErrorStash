@@ -18,6 +18,21 @@ export async function GET(
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
+  // Visibility: owners always see their own entry; other users may only view it
+  // if it is public AND the viewer is Pro (community access).
+  if (entry.userId !== session.user.id) {
+    if (!entry.isPublic) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+    const viewer = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isPro: true },
+    })
+    if (!viewer?.isPro) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+  }
+
   return NextResponse.json(entry)
 }
 
