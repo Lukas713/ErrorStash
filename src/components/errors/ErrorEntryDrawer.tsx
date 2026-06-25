@@ -164,6 +164,25 @@ export function ErrorEntryDrawer() {
     })
   }
 
+  function handleTogglePin() {
+    if (!entry) return
+    const next = !entry.isPinned
+    setEntry(prev => prev ? { ...prev, isPinned: next } : null)
+    updateEntry(entry.id, { isPinned: next })
+    startTransition(async () => {
+      const res = await fetch(`/api/errors/${entry.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPinned: next }),
+      })
+      if (!res.ok) {
+        setEntry(prev => prev ? { ...prev, isPinned: !next } : null)
+        updateEntry(entry.id, { isPinned: !next })
+        toast.error('Failed to update')
+      }
+    })
+  }
+
   function handleToggleVisibility() {
     if (!entry) return
     const next = !entry.isPublic
@@ -269,6 +288,18 @@ export function ErrorEntryDrawer() {
                 <Star className={cn('size-4', entry?.isFavorite && 'fill-yellow-400')} />
                 <span className="sr-only">Favorite</span>
               </Button>
+              {isOwner && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={handleTogglePin}
+                  disabled={!entry || isPending}
+                  className={cn(entry?.isPinned ? 'text-yellow-400' : 'text-muted-foreground')}
+                >
+                  <Pin className={cn('size-4', entry?.isPinned && 'fill-yellow-400')} />
+                  <span className="sr-only">{entry?.isPinned ? 'Unpin' : 'Pin'}</span>
+                </Button>
+              )}
               {isOwner && (
                 <Button
                   variant="ghost"
