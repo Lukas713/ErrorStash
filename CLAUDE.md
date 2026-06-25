@@ -15,13 +15,15 @@ Read the following to get the full context of the project:
 ## Commands
 
 ```bash
-npm run dev      # start dev server on http://localhost:3000
-npm run build    # production build
-npm run start    # serve production build
-npm run lint     # run ESLint
+npm run dev        # start dev server on http://localhost:3000
+npm run build      # production build
+npm run start      # serve production build
+npm run lint       # run ESLint
+npm test           # run unit tests (Vitest) once
+npm run test:watch # run unit tests in watch mode
 ```
 
-No test runner is configured yet.
+Unit tests use **Vitest** and cover **server actions (`src/actions/`) and utilities (`src/lib/`) only** — not components. Test files are co-located as `*.test.ts`. See `context/ai-interaction.md` for the testing workflow.
 
 ## Stack
 
