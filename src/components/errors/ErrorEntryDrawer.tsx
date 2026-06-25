@@ -14,12 +14,15 @@ import {
   SheetTitle,
   SheetDescription,
   SheetClose,
+  SheetFooter,
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { useDashboard } from '@/context/dashboard-context'
+import { updateErrorAction } from '@/actions/errors'
 import type { ErrorEntryDetail } from '@/lib/db/errors'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/lib/format'
+import { ErrorForm } from './ErrorForm'
 
 function DrawerSkeleton() {
   return (
@@ -80,7 +83,9 @@ export function ErrorEntryDrawer() {
   const { selectedEntryId, setSelectedEntryId, user, updateEntry, removeEntry } = useDashboard()
   const [entry, setEntry] = useState<ErrorEntryDetail | null>(null)
   const [loading, setLoading] = useState(false)
+  const [editing, setEditing] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [isSaving, startSaving] = useTransition()
   const router = useRouter()
 
   const open = selectedEntryId !== null
@@ -88,9 +93,11 @@ export function ErrorEntryDrawer() {
   useEffect(() => {
     if (!selectedEntryId) {
       setEntry(null)
+      setEditing(false)
       return
     }
     setLoading(true)
+    setEditing(false)
     setEntry(null)
     fetch(`/api/errors/${selectedEntryId}`)
       .then(res => (res.ok ? res.json() : null))
@@ -101,6 +108,29 @@ export function ErrorEntryDrawer() {
 
   function handleOpenChange(next: boolean) {
     if (!next) setSelectedEntryId(null)
+  }
+
+  function handleEditSubmit(formData: FormData) {
+    if (!entry) return
+    const id = entry.id
+    formData.set('id', id)
+    startSaving(async () => {
+      const result = await updateErrorAction(formData)
+      if (result.error) {
+        toast.error(result.error)
+        return
+      }
+      if (result.entry) {
+        setEntry(result.entry)
+        updateEntry(id, {
+          status: result.entry.status,
+          isPublic: result.entry.isPublic,
+        })
+      }
+      setEditing(false)
+      toast.success('Entry updated')
+      router.refresh()
+    })
   }
 
   function handleCopyStackTrace() {
@@ -177,6 +207,48 @@ export function ErrorEntryDrawer() {
         <SheetTitle className="sr-only">{entry?.title ?? 'Error Entry'}</SheetTitle>
         <SheetDescription className="sr-only">Error entry details</SheetDescription>
 
+        {editing && entry && (
+          <>
+            <div className="flex shrink-0 items-center justify-between border-b border-border px-6 py-4">
+              <h2 className="text-base font-semibold text-foreground">Edit Entry</h2>
+              <SheetClose
+                render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
+              >
+                <X className="size-4" />
+                <span className="sr-only">Close</span>
+              </SheetClose>
+            </div>
+
+            <div className="flex-1 overflow-y-auto">
+              <ErrorForm
+                key={entry.id}
+                id="edit-entry-form"
+                defaults={{
+                  title: entry.title,
+                  status: entry.status,
+                  description: entry.description,
+                  stackTrace: entry.stackTrace,
+                  solution: entry.solution,
+                  tags: entry.tags.map(t => t.name),
+                  isPublic: entry.isPublic,
+                }}
+                onSubmit={handleEditSubmit}
+              />
+            </div>
+
+            <SheetFooter>
+              <Button variant="outline" onClick={() => setEditing(false)} disabled={isSaving}>
+                Cancel
+              </Button>
+              <Button form="edit-entry-form" type="submit" disabled={isSaving}>
+                {isSaving ? 'Saving…' : 'Save'}
+              </Button>
+            </SheetFooter>
+          </>
+        )}
+
+        {!editing && (
+          <>
         {/* Header: title, actions, meta */}
         <div className="shrink-0 border-b border-border px-6 py-4">
           <div className="flex items-start justify-between gap-3">
@@ -197,15 +269,18 @@ export function ErrorEntryDrawer() {
                 <Star className={cn('size-4', entry?.isFavorite && 'fill-yellow-400')} />
                 <span className="sr-only">Favorite</span>
               </Button>
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                disabled
-                className="text-muted-foreground"
-              >
-                <Pencil className="size-4" />
-                <span className="sr-only">Edit</span>
-              </Button>
+              {isOwner && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setEditing(true)}
+                  disabled={!entry || isPending}
+                  className="text-muted-foreground"
+                >
+                  <Pencil className="size-4" />
+                  <span className="sr-only">Edit</span>
+                </Button>
+              )}
               {isOwner && (
                 <Button
                   variant="ghost"
@@ -363,6 +438,8 @@ export function ErrorEntryDrawer() {
             </div>
           )}
         </div>
+          </>
+        )}
       </SheetContent>
     </Sheet>
   )
