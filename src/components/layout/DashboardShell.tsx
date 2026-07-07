@@ -3,6 +3,7 @@
 import { useState } from "react"
 import TopBar from "./TopBar"
 import Sidebar from "./Sidebar"
+import { CommandPalette } from "./CommandPalette"
 import { DashboardProvider } from "@/context/dashboard-context"
 import type { ErrorEntryWithTags, DashboardUser } from "@/lib/db/errors"
 import type { TagWithCount } from "@/lib/db/error-tags"
@@ -22,6 +23,7 @@ export default function DashboardShell({
 
   return (
     <DashboardProvider initialEntries={entries} initialTags={tags} user={user}>
+      <CommandPalette />
       <div className="flex h-screen flex-col">
         <TopBar onMenuClick={() => setSidebarOpen(prev => !prev)} />
         <div className="flex flex-1 overflow-hidden">
