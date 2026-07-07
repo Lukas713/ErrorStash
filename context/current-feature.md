@@ -1,29 +1,20 @@
-# Current Feature: Global Search / Command Palette
+# Current Feature
 
 ## Status
 
-In Progress
+Not Started
 
 ## Goals
 
-- Global command palette opened with Cmd+K (Mac) / Ctrl+K (Windows)
-- Client-side fuzzy search across all error entries (no server round-trips)
-- Grouped results: an error-entries section and a tags section
-- Full keyboard navigation (arrow keys to move, Enter to select)
-- Selecting an entry opens its error entry drawer
-- The TopBar search input opens the palette on click
-- Search input placeholder shows the ⌘K hint
+<!-- Add goals here -->
 
 ## Notes
 
-- Use the shadcn `cmdk` component (Command)
-- Pre-fetch searchable data on app load; reuse existing data-fetching functions
-- Searchable fields per entry: title, tag, visibility, solution
-- Spec: `context/features/global-search-spec.md`
+<!-- Add notes here -->
 
 ## Previous Feature
 
-Vitest Unit Testing Setup (Completed)
+Global Search / Command Palette (Completed)
 
 ## History
 
@@ -53,3 +44,4 @@ Vitest Unit Testing Setup (Completed)
 - **2026-06-25** — Edit Own Error Entry: the Edit pencil in the entry drawer is now owner-only and functional — clicking it switches the drawer in place to an edit form pre-filled with the entry's values (title, status, description, stack trace, solution, tags, visibility); extracted the create form markup into a shared `ErrorForm` component (`components/errors/ErrorForm.tsx`) used by both `NewEntryDialog` (create) and the drawer (edit), removing ~200 lines of would-be duplication; new `updateErrorEntry` DB function in `lib/db/errors.ts` updates scalar fields and reconciles `ErrorTag` join rows (upsert user tags, add/remove only changed links) returning the full `ErrorEntryDetail`; new `updateErrorAction` server action (Zod-validated, owner-checked server-side, returns the updated entry) alongside a shared `parseTags` helper; on save the drawer shows the updated entry, the list updates optimistically (status/visibility) plus `router.refresh()` for title/tags, with a success toast; Cancel discards via form unmount; PATCH still handles the lightweight favorite/pin/visibility toggles (commit `b8361b2`)
 - **2026-06-25** — Enable Pin Button: added a working owner-only Pin toggle to the entry drawer header next to the Favorite star (previously the drawer only showed a read-only "Pinned" label); `handleTogglePin` mirrors `handleToggleFavorite` — optimistic `setEntry` + context `updateEntry({ isPinned })`, `PATCH { isPinned }`, reverts on failure; button shows yellow (`text-yellow-400` + `fill-yellow-400`) when pinned with an Unpin/Pin SR label; the card pin icon and sidebar "Pinned" count/filter react automatically since they derive from the shared context entries; no backend change needed (PATCH already accepted `isPinned`, owner-checked); pin-to-top list sorting left out of scope (commit `cc8be8f`)
 - **2026-06-25** — Vitest Unit Testing Setup: installed `vitest` (v4) as a dev dependency; `vitest.config.mts` runs in a Node environment with `globals: true`, native tsconfig `@/` path resolution (`resolve.tsconfigPaths`, no extra plugin), and an `include` scoped to `src/actions/**/*.test.ts` + `src/lib/**/*.test.ts` — **server actions and utilities only, no component tests**; `npm test` (`vitest run`) and `npm run test:watch` scripts added; initial co-located tests: `src/lib/format.test.ts` (`formatDate`), `src/lib/rate-limit.test.ts` (`getIP`, `rateLimitResponse`), `src/actions/errors.test.ts` (`createErrorAction`/`updateErrorAction` with `@/auth`, `@/lib/prisma`, `@/lib/db/errors` mocked via `vi.hoisted` — covers unauthorized, validation, tag parsing, owner-check, and success paths); 12 tests passing, `npm run build` green; testing workflow documented in `context/ai-interaction.md` (workflow step 4 + new Testing section), `context/coding-standards.md`, and `CLAUDE.md` (commit `9c0cb62`)
+- **2026-07-07** — Global Search / Command Palette: installed shadcn `command` (cmdk) + `input-group`; `CommandPalette.tsx` (rendered in `DashboardShell`) opens with Cmd+K / Ctrl+K (global `keydown`) or by clicking the TopBar search, now a button with a ⌘K hint; results grouped into **Error Entries** (status + visibility icons) and **Tags** (with counts); selecting an entry opens its drawer via `setSelectedEntryId`, selecting a tag filters the list via `toggleTag`; `commandOpen`/`setCommandOpen` added to `DashboardContext`; searches the entries already in context (title, tags, visibility, solution) — no extra fetch, preserving per-user visibility scoping; **fixed** the base-nova `CommandDialog` omitting its `<Command>` wrapper (crashed `CommandInput` with a `subscribe` error) by wrapping content in `<Command>`; **replaced** cmdk's default subsequence fuzzy filter with a token-substring matcher `paletteFilter` in `src/lib/search.ts` (cmdk's default scatter-matched query letters across long solution text, returning ~6/8 entries for "prisma"; now returns exactly the relevant one), covered by `src/lib/search.test.ts` (7 tests); 19 tests passing, `npm run build` green, verified end-to-end in the browser (login → open → search → keyboard-nav → entry drawer + tag filter) (commit `1c62bfa`)
