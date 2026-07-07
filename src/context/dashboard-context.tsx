@@ -28,6 +28,8 @@ interface DashboardContextValue {
   setNewEntryOpen: (open: boolean) => void
   selectedEntryId: string | null
   setSelectedEntryId: (id: string | null) => void
+  commandOpen: boolean
+  setCommandOpen: (open: boolean) => void
 }
 
 const DashboardContext = createContext<DashboardContextValue | null>(null)
@@ -47,6 +49,7 @@ export function DashboardProvider({
   const [activeTags, setActiveTags] = useState<string[]>([])
   const [newEntryOpen, setNewEntryOpen] = useState(false)
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [commandOpen, setCommandOpen] = useState(false)
   const [entries, setEntries] = useState(initialEntries)
 
   useEffect(() => { setEntries(initialEntries) }, [initialEntries])
@@ -73,6 +76,7 @@ export function DashboardProvider({
       user, tags: initialTags,
       newEntryOpen, setNewEntryOpen,
       selectedEntryId, setSelectedEntryId,
+      commandOpen, setCommandOpen,
     }}>
       {children}
     </DashboardContext.Provider>

@@ -1,16 +1,25 @@
-# Current Feature
+# Current Feature: Global Search / Command Palette
 
 ## Status
 
-Not Started
+In Progress
 
 ## Goals
 
-<!-- Add goals here -->
+- Global command palette opened with Cmd+K (Mac) / Ctrl+K (Windows)
+- Client-side fuzzy search across all error entries (no server round-trips)
+- Grouped results: an error-entries section and a tags section
+- Full keyboard navigation (arrow keys to move, Enter to select)
+- Selecting an entry opens its error entry drawer
+- The TopBar search input opens the palette on click
+- Search input placeholder shows the ⌘K hint
 
 ## Notes
 
-<!-- Add notes here -->
+- Use the shadcn `cmdk` component (Command)
+- Pre-fetch searchable data on app load; reuse existing data-fetching functions
+- Searchable fields per entry: title, tag, visibility, solution
+- Spec: `context/features/global-search-spec.md`
 
 ## Previous Feature
 
